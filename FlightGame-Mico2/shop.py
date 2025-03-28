@@ -40,10 +40,10 @@ class Shop:
                         for item_info in temp_item_list:
                             if transaction_command and transaction_command in item_info or transaction_command.isnumeric() and int(transaction_command) in item_info:
                                 if action_necessities["commands"][1] == "Sell":
-                                    self.__sell(item_info[2], item_info[0], item_info[3],1 if not item_info[4] else item_info[4])
+                                    self.__sell(item_info[2], item_info[0], item_info[3],item_info[4])
                                     break
                                 elif action_necessities["commands"][1]== "Buy":
-                                    self.__buy(item_info[2], item_info[0],item_info[3])
+                                    self.__buy(item_info[2], item_info[0],item_info[3],item_info[4])
                                     break
                             else:
                                 in_transaction=False
@@ -91,7 +91,7 @@ class Shop:
         print("\nWeapons:\n")
         for wep in inventory_to_print.weapons:
             if wep.type != "nyrkki":
-                temp_item_list.append((wep, index, "weapon", 100))
+                temp_item_list.append((wep, index, "weapon", 100,1))
                 print(f"{index}. {wep.type}")
                 index += 1
         return temp_item_list
