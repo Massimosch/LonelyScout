@@ -1,11 +1,9 @@
-CREATE DATABASE LonelyScoutDB;
-USE LonelyScoutDB;
+CREATE DATABASE LonelyScout;
+USE LonelyScout;
 
 CREATE TABLE checkpoint (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
-    x INT NOT NULL,
-    y INT NOT NULL
+    name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE game (
@@ -14,10 +12,17 @@ CREATE TABLE game (
     current_checkpoint INT,
     health INT NOT NULL,
     score INT NOT NULL,
-    checkpoints_visited TEXT,
     is_ended BOOLEAN NOT NULL DEFAULT FALSE,
-    FOREIGN KEY (current_checkpoint) REFERENCES checkpoint(id)
+	FOREIGN KEY (current_checkpoint) REFERENCES checkpoint(id)
 );
+
+CREATE TABLE checkpointVisited (
+    game_id INT,
+    checkpoint_id INT,
+    FOREIGN KEY (game_id) REFERENCES game(id),
+    FOREIGN KEY (checkpoint_id) REFERENCES checkpoint(id)
+);
+
 
 CREATE TABLE enemy (
     enemy_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -27,20 +32,7 @@ CREATE TABLE enemy (
     health INT NOT NULL
 );
 
-CREATE TABLE event (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    type VARCHAR(255) NOT NULL,
-    description TEXT
-);
-
-CREATE TABLE event_actions (
-    action_id INT PRIMARY KEY AUTO_INCREMENT,
-    event_id INT NOT NULL,
-    action_description TEXT NOT NULL,
-    FOREIGN KEY (event_id) REFERENCES event(id)
-);
-
-CREATE TABLE weapon (
+CREATE TABLE weapons (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     type VARCHAR(255) NOT NULL,
@@ -49,47 +41,51 @@ CREATE TABLE weapon (
     durability INT NOT NULL
 );
 
-CREATE TABLE consumable (
+CREATE TABLE consumables (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     sale_value INT NOT NULL,
     heal_amount INT
 );
 
-CREATE TABLE inventory (
-    game_id INT NOT NULL,
-    item_name VARCHAR(255) NOT NULL,
-    item_type ENUM('weapon', 'consumable') NOT NULL,
+
+CREATE TABLE weapon_Inventory (
+    game_id INT,
+    item_id INT,
     current_durability INT,
-    PRIMARY KEY (game_id, item_name),
-    FOREIGN KEY (game_id) REFERENCES game(id)
+    FOREIGN KEY (game_id) REFERENCES game(id),
+    FOREIGN KEY (item_id) REFERENCES weapons(id)
 );
 
-INSERT INTO event (type, description) VALUES
-('merchant', 'Saavut vanhan miehen luokse, hän huutaa sinulle. "Täällä kannattaisi pysähtyä!", pistäydyt miehen luokse ja hyllyt notkuvat erilaisia tavaroita.'),
-('enemy', 'Jouduimme taisteluun!');
+CREATE TABLE consumable_Inventory (
+    game_id INT,
+    item_id INT,
+    FOREIGN KEY (game_id) REFERENCES game(id),
+    FOREIGN KEY (item_id) REFERENCES consumables(id)
+);
+
 
 INSERT INTO enemy (name, damage, weakness, health) VALUES
 ('goblin', 3, "sword", 30),
 ('rogue', 5, "magic", 40),
 ('slime', 2, "hand", 20);
 
-INSERT INTO consumable (name, sale_value, heal_amount) VALUES
+INSERT INTO consumables (name, sale_value, heal_amount) VALUES
 ('parantava juoma', 30, 25),
 ('nakki', 2, 5),
 ('piirakka', 20, 15);
 
-INSERT INTO weapon (name, type, sale_value, damage, durability) VALUES
+INSERT INTO weapons (name, type, sale_value, damage, durability) VALUES
 ('steel sword', 'sword', 250, 100, 10),
 ('slingshot', 'ranged', 100, 50, 10),
 ('bow', 'ranged', 150, 50, 10),
 ('magic staff', 'magic', 175, 60, 10);
 
-INSERT INTO checkpoint (name, x, y) VALUES
-('Kotikylä', 0, 0),
-('Vuoristokylä', 3, 3),
-('Synkkämetsä', 4, 7),
-('Sumuinen laakso', 5,10),
-('Lohikäärmeiden syvänne', 8, 12),
-('Rauniot', 10, 10),
-('Sademetsä', 14, 14);
+INSERT INTO checkpoint (name) VALUES
+('Kotikylä'),
+('Vuoristokylä'),
+('Synkkämetsä'),
+('Sumuinen laakso'),
+('Lohikäärmeiden syvänne'),
+('Rauniot'),
+('Sademetsä');
