@@ -45,3 +45,27 @@ if (aloitaButton)
     });
 }
 
+if (lataaButton)
+{
+    lataaButton.addEventListener("click", function (event){
+        loadGameState();
+    });
+}
+
+async function loadGameState() {
+    let username = prompt("Anna haettavan peliukon nimi: ")
+    
+    if (!username) 
+        return;
+    
+    try {
+        const response = await fetch(`http://localhost:3006/game_state/${username}`);
+        alert("Pelitila haettu!")
+        console.log(response)
+    }
+    catch (e) {
+        console.log("Virhe haussa!")
+        alert("Pelintila ei löydy.")
+    }
+}
+
