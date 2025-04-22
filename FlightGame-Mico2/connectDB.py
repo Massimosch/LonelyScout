@@ -17,7 +17,7 @@ yhteys = mysql.connector.connect(
          )
 
 def get_checkpoints():
-    sql = 'select name, x, y from checkpoint'
+    sql = 'select name from checkpoint'
     cursor = yhteys.cursor()
     cursor.execute(sql)
 
@@ -29,8 +29,9 @@ def create_checkpoints():
     checkpoints = []
     result_from_db = get_checkpoints()
     for line in result_from_db:
-        name, x, y = line
-        checkpoint = Checkpoint(name, x, y)
+        #name = line
+        #checkpoint = checkpoint(name)
+        checkpoint = line
         checkpoints.append(checkpoint)
     return checkpoints
 
