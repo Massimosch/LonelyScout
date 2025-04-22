@@ -1,8 +1,6 @@
 ﻿import item
-import random
 import weapon
 import inventory
-from weapon import Weapon
 
 
 class Shop:
@@ -95,13 +93,3 @@ class Shop:
                 print(f"{index}. {wep.type}")
                 index += 1
         return temp_item_list
-
-# FOR TESTING BELOW
-pl_inv=inventory.Inventory()
-s=Shop(pl_inv)
-pl_inv.add_weapon(Weapon("some",12,12))
-pl_inv.add_item("apple")
-pl_inv.add_item("meat")
-print(*pl_inv.weapons)
-s.shop()
-print(*pl_inv.weapons)
