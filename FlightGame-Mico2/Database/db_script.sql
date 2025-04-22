@@ -4,8 +4,13 @@ USE DATABASE LonelyScout;
 CREATE TABLE checkpoint (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
-    x INT NOT NULL,
-    y INT NOT NULL
+);
+
+CREATE TABLE checkpointVisited (
+    game_id INT,
+    checkpoint_id INT,
+    FOREIGN KEY game_id REFERENCES game(id),
+    FOREIGN KEY (checkpoint_id) REFERENCES checkpoint(id)
 );
 
 CREATE TABLE game (
@@ -14,9 +19,8 @@ CREATE TABLE game (
     current_checkpoint INT,
     health INT NOT NULL,
     score INT NOT NULL,
-    checkpoints_visited TEXT,
     is_ended BOOLEAN NOT NULL DEFAULT FALSE,
-	FOREIGN KEY current_checkpoint REFERENCES checkpoint(id)
+	FOREIGN KEY (current_checkpoint) REFERENCES checkpoint(id)
 );
 
 CREATE TABLE enemy (
@@ -27,20 +31,22 @@ CREATE TABLE enemy (
     health INT NOT NULL
 );
 
-CREATE TABLE event (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    type VARCHAR(255) NOT NULL,
-    description TEXT,
+CREATE TABLE weapon_Inventory (
+    game_id INT,
+    item_id INT,
+    current_durability INT,
+    FOREIGN KEY (game_id) REFERENCES game(id),
+    FOREIGN KEY (item_id) REFERENCES weapons(id)
 );
 
-CREATE TABLE event_actions (
-	action_id PRIMARY KEY AUTO_INCREMENT,
-	event_id INT NOT NULL,
-	action_description TEXT NOT NULL,
-	FOREIGN KEY (event_id) REFERENCES event(id)
+CREATE TABLE consumable_Inventory (
+    game_id INT,
+    item_id INT,
+    FOREIGN KEY (game_id) REFERENCES game(id),
+    FOREIGN KEY (item_id) REFERENCES consumables(id)
 );
 
-CREATE TABLE weapon (
+CREATE TABLE weapons (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     type VARCHAR(255) NOT NULL,
@@ -49,18 +55,11 @@ CREATE TABLE weapon (
     durability INT NOT NULL
 );
 
-CREATE TABLE consumable (
+CREATE TABLE consumables (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     sale_value INT NOT NULL,
     heal_amount INT
 );
 
-CREATE TABLE inventory (
-    game_id INT,
-    item_name VARCHAR(255),
-	item_type ENUM('weapon', 'consumable') NOT NULL,
-    current_durability INT,
-    PRIMARY KEY (game_id, item_name),
-    FOREIGN KEY (game_id) REFERENCES game(id)
-);
+
