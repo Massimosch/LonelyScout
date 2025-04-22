@@ -16,7 +16,7 @@ class Game:
 
     def start_game(self):
         while True:
-            print(f"Sinä olet tässä: {self.checkpoints[self.player.position].name}. Mitä sä haluat tehdä?")
+            print(f"Sinä olet tässä: {self.checkpoints[self.player.position]}. Mitä sä haluat tehdä?")
             print("1. Siirry")
             print("2. Käy kaupassa")
             print("3. Vaihda ase")
