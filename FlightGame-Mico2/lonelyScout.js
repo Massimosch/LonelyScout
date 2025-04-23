@@ -41,31 +41,58 @@ if (playerInput)
 if (aloitaButton)
 {
     aloitaButton.addEventListener("click", function(event){
-        window.location.href = "peli.html"
+        new_game();
+        //window.location.href = "peli.html"
     });
 }
 
 if (lataaButton)
 {
-    lataaButton.addEventListener("click", function (event){
+    lataaButton.addEventListener("click", function (){
         loadGameState();
     });
 }
 
 async function loadGameState() {
     let username = prompt("Anna haettavan peliukon nimi: ")
+    username = username.toLowerCase()
     
     if (!username) 
         return;
     
     try {
-        const response = await fetch(`http://localhost:3006/game_state/${username}`);
-        alert("Pelitila haettu!")
-        console.log(response)
+        const response = await fetch(`http://localhost:8000/game_state/${username}`);
+        if (response.ok) {
+            alert(`Pelintila ladattiin nimimerkillä '${username}'.`)
+        }
+        else {
+            alert(`Nimimerkillä '${username}' ei löytynyt pelintilaa ladattavaksi.`)
+        }
     }
     catch (e) {
-        console.log("Virhe haussa!")
-        alert("Pelintila ei löydy.")
+        alert("Jokin Error. Tarkista console.log.")
+        console.log(e)
     }
 }
 
+async function new_game() {
+    let username = prompt("Anna uusi käyttäjä nimi: ")
+    username = username.toLowerCase()
+    
+    if (!username)
+        return;
+    
+    try {
+        const response = await fetch(`http://localhost:8000/new_game/${username}`);
+        if (response.ok) {
+            alert(`Pelintila luotiin nimimerkillä '${username}'!`)
+        }
+        else {
+            alert(`Nimimerkillä '${username}' on jo peli olemassa.`)
+        }
+    }
+    catch (e) {
+        alert("Jokin error. Tarkista console.log")
+        console.log(e)
+    }
+}
