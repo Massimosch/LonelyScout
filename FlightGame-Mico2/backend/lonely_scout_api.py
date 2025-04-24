@@ -15,11 +15,12 @@ def game_state(player_name):
 @app.route('/new_game/<player_name>')
 def start_game(player_name):
     result = lonely_scout_backend_functions.create_new_game_state(player_name)
-    
     if result is False:
         ##korjaa palautus järkevämmäksi.
         return "Nimikäytössä", 404
     return result
+
+
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)

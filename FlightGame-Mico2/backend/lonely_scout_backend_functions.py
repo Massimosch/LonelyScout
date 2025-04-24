@@ -32,6 +32,16 @@ def create_new_game_state(player_name):
     response = exequte_this_query(insert_query)
     return response
 
-#input = input("Anna nimi: ")
-#get_game_state(input)
+def move_to_checkpoint(player_name):
+    current_checkpoint_query = f"SELECT current_checkpoint FROM game WHERE player_name = '{player_name}'"
+    checkpoint = exequte_this_query(current_checkpoint_query)
+    next_checkpoint = checkpoint + 1
+    ## TÄHÄN JOS CHECK POINT ON VIIMINEN DATABASESSA GAME END = TRUE..
+    ## LISÄTÄÄN CHECKPOINT 'CHECKPOINTS VISITED'...
+    
+    update_current_query = f"UPDATE game SET current_checkpoint = {next_checkpoint} WHERE player_name = '{player_name}'"
+    exequte_this_query(update_current_query)
+    
+    return next_checkpoint
+    
 
