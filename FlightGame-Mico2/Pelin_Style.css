@@ -19,7 +19,7 @@
     justify-content: space-between;
 }
 
-.status-box, .map-box, .narrator-box {
+.status-box, .map-box {
     border: 2px solid black;
     padding: 1em;
     background-color: lemonchiffon;
@@ -35,23 +35,4 @@
 .map-box img {
     width: 40rem;
     height: 25rem;
-}
-
-.log-box {
-    height: 10rem;
-    background: white;
-    padding: 1em;
-    margin-bottom: 1em;
-    font-size: 0.8em;
-    border-radius: 1em;
-    border: 1px solid black;
-}
-
-#player-input {
-    width: 58rem;
-    padding: 1rem;
-    font-size: 1em;
-    font-family: 'Source Code Pro', monospace;
-    border: 1px solid black;
-    border-radius: 1em;
 }

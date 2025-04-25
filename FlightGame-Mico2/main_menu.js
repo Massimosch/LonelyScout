@@ -4,8 +4,6 @@ const aloitaButton = document.querySelector("#aloita");
 const lataaButton = document.querySelector("#lataa");
 const tekijätButton = document.querySelector("#tekijät");
 const takaisinButton = document.querySelector("#takaisin")
-const narratorLog = document.querySelector("#narrator-log");
-const playerInput = document.querySelector("#player-input");
 
 if (tekijätButton) 
 {
@@ -19,23 +17,6 @@ if (takaisinButton)
     takaisinButton.addEventListener("click", function(){
         window.location.href = "menu.html"
     })
-}
-
-if (playerInput)
-{
-    playerInput.addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-            const command = playerInput.value.trim();
-            if (command !== "")
-            {
-                const entry = document.createElement('p');
-                entry.innerHTML = "> " + command;
-                narratorLog.appendChild(entry)
-                
-                playerInput.value = "";
-            }
-        }
-    })    
 }
 
 if (aloitaButton)
@@ -64,6 +45,7 @@ async function loadGameState() {
         const response = await fetch(`http://localhost:8000/game_state/${username}`);
         if (response.ok) {
             alert(`Pelintila ladattiin nimimerkillä '${username}'.`)
+            window.location.href = `peli.html?username=${username}`;
         }
         else {
             alert(`Nimimerkillä '${username}' ei löytynyt pelintilaa ladattavaksi.`)
@@ -86,6 +68,7 @@ async function new_game() {
         const response = await fetch(`http://localhost:8000/new_game/${username}`);
         if (response.ok) {
             alert(`Pelintila luotiin nimimerkillä '${username}'!`)
+            window.location.href = `peli.html?username=${username}`;
         }
         else {
             alert(`Nimimerkillä '${username}' on jo peli olemassa.`)
