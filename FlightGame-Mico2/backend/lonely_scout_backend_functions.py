@@ -1,5 +1,6 @@
 ﻿import database
 
+##THIS FUNCTIONS CLOSES AND OPENS AND DOES QUERY TO DB
 def exequte_this_query(query):
     cursor = database.yhteys.cursor(dictionary=True)
     try:
