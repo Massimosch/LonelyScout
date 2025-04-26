@@ -56,10 +56,14 @@ async function new_game() {
         return;
     
     try {
-        const response = await fetch(`http://localhost:8000/new_game/${username}`);
+        const response = await fetch(`http://localhost:8000/new_game/${username}`,{
+            method: "POST"
+        });
+        const data = (await response.json())[0]
+        console.log(data)
         if (response.ok) {
-            alert(`Pelintila luotiin nimimerkillä '${username}'!`)
-            window.location.href = `peli.html?username=${username}`;
+          //  alert(`Pelintila luotiin nimimerkillä '${username}'!`)
+        //    window.location.href = `peli.html?username=${username}`;
         }
         else {
             alert(`Nimimerkillä '${username}' on jo peli olemassa.`)
