@@ -7,31 +7,22 @@ const takaisinButton = document.querySelector("#takaisin")
 
 if (tekijätButton) 
 {
-    tekijätButton.addEventListener("click", function() {
-        window.location.href = "tekijät.html"
-    });
+    tekijätButton.addEventListener("click", () => { window.location.href = "tekijät.html" })
 }
 
 if (takaisinButton)
 {
-    takaisinButton.addEventListener("click", function(){
-        window.location.href = "menu.html"
-    })
+    takaisinButton.addEventListener("click", () => { window.location.href = "menu.html" })
 }
 
 if (aloitaButton)
 {
-    aloitaButton.addEventListener("click", function(event){
-        new_game();
-        //window.location.href = "peli.html"
-    });
+    aloitaButton.addEventListener("click", new_game)
 }
 
 if (lataaButton)
 {
-    lataaButton.addEventListener("click", function (){
-        loadGameState();
-    });
+    lataaButton.addEventListener("click", loadGameState);
 }
 
 async function loadGameState() {
