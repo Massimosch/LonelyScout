@@ -29,9 +29,7 @@ if (aloitaButton)
 
 if (lataaButton)
 {
-    lataaButton.addEventListener("click", function (){
-        loadGameState();
-    });
+    lataaButton.addEventListener("click", loadGameState);
 }
 
 async function loadGameState() {

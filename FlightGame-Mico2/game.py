@@ -1,6 +1,4 @@
-import requests
 from player import Player
-from enemy import CreateEnemy
 import random
 from fight import Fight
 from connectDB import yhteys
