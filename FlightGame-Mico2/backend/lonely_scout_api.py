@@ -31,10 +31,10 @@ def start_new_game(player_name):
     result = lonely_scout_backend_functions.get_game(player_name)
     if len(result) > 0:
         lonely_scout_backend_functions.delete_game(player_name)
-
-    checkpoint = lonely_scout_backend_functions.get_checkpoints()[0]['id'] #to get the first checkpoint id
-    print(checkpoint)
-    result = lonely_scout_backend_functions.start_new_game(player_name, checkpoint, 100, 0)
+    checkpoints = lonely_scout_backend_functions.get_checkpoints()
+    current_checkpoint = lonely_scout_backend_functions.get_checkpoints()[0]['id'] #to get the first checkpoint id
+    print(current_checkpoint)
+    result = lonely_scout_backend_functions.start_new_game(player_name, current_checkpoint, 100, 0)
     return result
 
 @app.route('/get_checkpoints')
