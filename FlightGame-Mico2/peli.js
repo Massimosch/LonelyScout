@@ -3,7 +3,14 @@
 const health = document.querySelector('#health');
 const score = document.querySelector('#score');
 const checkpoint = document.querySelector('#checkpoint');
+const takaisinBtn = document.querySelector('#back_to_menu');
 
+
+if (takaisinBtn) {
+    takaisinBtn.addEventListener("click", () => {
+        window.location.href = "menu.html";
+    });
+}
 
 async function updateGameState(username) {
 

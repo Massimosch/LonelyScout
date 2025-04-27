@@ -7,6 +7,21 @@
     justify-content: center;
 }
 
+#back_to_menu {
+    position: absolute;
+    top: 2rem;
+    right: 30rem;
+    padding: 0.5rem 0.5rem;
+    font-size: 1rem;
+    background-color: darkolivegreen;
+    color: white;
+    cursor: pointer;
+}
+
+#back_to_menu:hover {
+    background-color: olivedrab;
+}
+
 .game-container {
     display: flex;
     flex-direction: column;

@@ -33,7 +33,7 @@ async function loadGameState() {
         return;
     
     try {
-        const response = await fetch(`http://localhost:8000/game_state/${username}`);
+        const response = await fetch(`http://localhost:8000/load_game/${username}`);
         if (response.ok) {
             alert(`Pelintila ladattiin nimimerkillä '${username}'.`)
             window.location.href = `peli.html?username=${username}`;
@@ -63,7 +63,7 @@ async function new_game() {
         console.log(data)
         if (response.ok) {
           //  alert(`Pelintila luotiin nimimerkillä '${username}'!`)
-        //    window.location.href = `peli.html?username=${username}`;
+            window.location.href = `peli.html?username=${username}`;
         }
         else {
             alert(`Nimimerkillä '${username}' on jo peli olemassa.`)
