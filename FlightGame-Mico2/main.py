@@ -1,8 +1,6 @@
 import main_menu
 from game import Game
 from connectDB import create_checkpoints, create_enemies
-import enemy
-import weapon
 
 ##LUODAAN OLIO MENUSTA JA AJETAAN SE
 Menu = main_menu.MainMenu()
