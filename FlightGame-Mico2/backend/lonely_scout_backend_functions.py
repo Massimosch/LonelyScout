@@ -1,4 +1,4 @@
-﻿import database
+import database
 
 
 def exequte_this_query(query):
@@ -15,7 +15,7 @@ def exequte_this_query(query):
 
 def get_game(player_name):
     q = f"SELECT * FROM game WHERE player_name = '{player_name}' AND is_ended IS FALSE"
-    result = exequte_this_query(q)
+    result = [exequte_this_query(q),get_consumables(player_name)] #Nikita: laitoin tulokselle consumables listan
     print(result)
     return result
 
@@ -48,3 +48,14 @@ def get_checkpoints():
     checkpoints = exequte_this_query(q_for_checkpoints)
     print(checkpoints)
     return checkpoints
+
+def get_consumables(player_name): #funktio, joka tekee consumables listan
+    q=f"""Select name, sale_value, heal_amount, count(*) as 'quantity' 
+          from game inner join consumable_inventory on game.id=consumable_Inventory.game_id
+          inner join consumables on consumable_Inventory.item_id=consumables.id
+          WHERE game.player_name='{player_name}'
+          GROUP BY consumables.name"""
+    consumables=exequte_this_query(q)
+    return consumables
+
+get_game('kul')

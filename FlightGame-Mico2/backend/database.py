@@ -1,4 +1,4 @@
-﻿from os import getenv
+from os import getenv
 import mysql.connector
 from dotenv import load_dotenv
 

@@ -1,4 +1,4 @@
-﻿from flask import Flask, request
+from flask import Flask, request
 from flask_cors import CORS
 import lonely_scout_backend_functions
 app = Flask(__name__)
@@ -46,6 +46,8 @@ def get_checkpoint():
 def get_random_enemy():
     result = lonely_scout_backend_functions.get_random_enemy()
     return result
+
+
 
 
 if __name__ == '__main__':
