@@ -20,8 +20,8 @@ async function updateGameState(username) {
     try {
         const response = await fetch(`http://localhost:8000/load_game/${username}`, {method: "GET"});
         const data = await response.json();
-        const userData = data[0];
-        
+        const userData = data[0][0]; //Nikita: muutin indexin uudelle responsille
+
         health.innerHTML = `TERVEYS: ${userData.health}`;
         score.innerHTML = `SCORE: ${userData.score}`;
         checkpoint.innerHTML = `CHECKPOINT: ${userData.checkpoint}`;
