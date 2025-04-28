@@ -1,16 +1,18 @@
 ﻿'use strict'
-const shopInventory= {
-    weapons:[{name:"a1", type:"kakka", sale_value:"140", damage:"10",durability:"100"},
-  {name:"a2", type:"kakka", sale_value:"140", damage:"10",durability:"100"},
-{name:"a3", type:"kakka", sale_value:"140", damage:"10",durability:"100"}]
+let shopInventory= {
+    weapons:[{name:"a1", type:"kakka", sale_value:140, damage:"10",durability:"100"},
+  {name:"a2", type:"kakka", sale_value:140, damage:"10",durability:"100"},
+{name:"a3", type:"kakka", sale_value:140, damage:"10",durability:"100"}]
 };
-const playerInventory={
-    weapons:[{name:"a1", type:"kakka", sale_value:"140", damage:"10",durability:"100", amount:1},
-  {name:"a2", type:"kakka", sale_value:"140", damage:"10",durability:"100",amount:2},
-{name:"a3", type:"kakka", sale_value:"140", damage:"10",durability:"100",amount:3}]
+let playerInventory={
+    weapons:[{name:"a1", type:"kakka", sale_value:140, damage:"10",durability:"100"},
+  {name:"a2", type:"kakka", sale_value:140, damage:"10",durability:"100"},
+{name:"a3", type:"kakka", sale_value:140, damage:"10",durability:"100"}]
 };
+let gold=100;
+const goldText=document.getElementById("goldText");
 const articleInfoArray={weapon:{h:"Aseet: "},consumable:{h:"Käyttötavarat: "}};
-const tradeArray=[];
+let tradeArray={sell:[],buy:[]};
 const shopBox= document.getElementById("shopInventory");
 const playerBox=document.getElementById("playerInventory");
 const tradeWindow= document.getElementById("tradeWindow");
@@ -21,6 +23,7 @@ function createShop()
 {
   printInventory(shopInventory,shopBox);
   printInventory(playerInventory, playerBox);
+  goldText.innerText=`Gold: ${gold}`
 }
 function printInventory(inventory,box)
 {
@@ -32,47 +35,65 @@ function printInventory(inventory,box)
   itemContainer.appendChild(wepH);
   for (let item of inventory['weapons']){
     let p=document.createElement('p');
-    p.innerText=item;
+    p.innerText=item.name;
     let button= document.createElement('button');
     button.innerText="asdf";
-    if(inventory===playerInventory)
-    {
-      button.addEventListener("click",function(){
-          console.log(item.amount);
-          item.amount-=1;
-          let index=tradeArray.indexOf(item);
-          if (tradeArray[index]){
-            let index= tradeArray.indexOf(item);
-            tradeArray[index].amount+=1;
-                      console.log(tradeArray[index]);
-          }
-          else {
-            tradeArray.push(item);
-            let index= tradeArray.indexOf(item)
-            tradeArray[index].amount=1;
-                      console.log(tradeArray[index]);
-          }
-          if (item.amount<1)
-          {
-            playerInventory['weapons'].splice(item);
-            console.log("+")
-            itemContainer.removeChild(button);
-            itemContainer.removeChild(p);
-          }
-    });
-    }
     itemContainer.appendChild(button);
     itemContainer.appendChild(p);
+    let thing=[button,p];
+
+  button.addEventListener("click",function(){
+    let addToTrade=false;
+      for (let i of thing){
+        if (tradeWindow.contains(i)){
+          itemContainer.appendChild(i);
+        }
+        else{
+          addToTrade=true;
+          tradeWindow.appendChild(i);
+        }
+      }
+      if (addToTrade)
+      {
+          if (inventory===shopInventory)
+          {
+            gold-=item.sale_value;
+            tradeArray['buy'].push(item);
+          }
+          else{
+            gold+=item.sale_value;
+            tradeArray['sell'].push(item);
+          }
+          goldText.innerText=`Gold: ${gold}`;
+      }
+      else
+      {
+          if (inventory===shopInventory)
+          {
+            let ind=tradeArray.buy.indexOf(item);
+            gold+=item.sale_value;
+            tradeArray.buy.splice(ind,1);
+          }
+          else{
+            let ind=tradeArray.sell.indexOf(item);
+            gold-=item.sale_value;
+            tradeArray.sell.splice(ind,1);
+          }
+          goldText.innerText=`Gold: ${gold}`;
+
+      }
+      console.log(tradeArray);
+  });
+
   }
   box.appendChild(itemContainer);
 }
-
 function getPlayerInventory()
 {
   //gets player inventory from db
 }
 function completeTransaction()
 {
-
+  //something in here to update the inventories for good if money not negative
 }
 createShop();
