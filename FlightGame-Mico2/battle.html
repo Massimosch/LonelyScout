@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LonelyScout Game</title>
+    <link rel="stylesheet" href="battle.css">
+    <script src="battle.js" defer></script>
+</head>
+<body>
+<div class="battle-container">
+    <div class="status-battle-container">
+        <div class="status-box">
+            <h2>PELAAJAN TILANNE</h2>
+            <p id="health">TERVEYS: ei mitään</p>
+            <p id="score">SCORE: ei mitään</p>
+            <p id="checkpoint">PAIKKA: ei mitään </p>
+            <p>ASEET (VALITTU ON KÄYTÖSSÄ):</p>
+            <select name="aseet" id="aseet">
+                <option value="Nyrkit">Nyrkit</option>
+                <option value="Miekka">Miekka</option>
+                <option value="Jousi">Jousi</option>
+            </select>
+            <button id="hit">lyödä</button>
+            <p>REPPU: MIEKKA, RUOKA</p>
+            <img src="images/adventurer.png" alt="adventurer kuva">
+        </div>
+        <div class="battle-box">
+            <h2 id="enemy_name">Sinun vihollinen on goblin</h2>
+            <p id="enemy_weakness">HAAVOITTUVUUS: ei mitään</p>
+            <p id="enemy_damage">ISKUVARIO: ei mitään</p>
+            <p id="enemy_health">TERVEYS: ei mitään</p>
+            <img src="https://placehold.co/600x400" alt="Map Image">
+        </div>
+    </div>
+<!--    <div class="buttons-battle-container"></div>  -->
+</div>
+</body>
+</html>

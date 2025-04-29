@@ -1,0 +1,49 @@
+'use strict';
+
+const health = document.querySelector('#health');
+const score = document.querySelector('#score');
+const checkpoint = document.querySelector('#checkpoint');
+const enemy_weakness = document.querySelector('#enemy_weakness')
+const enemy_damage = document.querySelector('#enemy_damage')
+const enemy_health = document.querySelector('#enemy_health')
+const enemy_name = document.querySelector('#enemy_name')
+
+async function updateGameState(username) {
+
+    if (!username)
+        return;
+
+    try {
+        const response = await fetch(`http://localhost:8000/load_game/${username}`, {method: "GET"});
+        const data = await response.json();
+        const userData = data[0];
+
+        health.innerHTML = `TERVEYS: ${userData.health}`;
+        score.innerHTML = `SCORE: ${userData.score}`;
+        checkpoint.innerHTML = `CHECKPOINT: ${userData.checkpoint}`;
+
+        const enemy_res = await fetch('http://localhost:8000/get_random_enemy')
+        const enemy = (await enemy_res.json())[0]
+
+        enemy_name.innerHTML = `Sinun vihollinen on ${enemy.name}`
+        enemy_weakness.innerHTML = `HAAVOITTUVUUS: ${enemy.weakness}`;
+        enemy_damage.innerHTML = `ISKUVARIO: ${enemy.damage}`;
+        enemy_health.innerHTML = `TERVEYS: ${enemy.health}`;
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    //Ehkä vähän outo tapa tehdä... täytyy miettiä.
+    const window_parameter = new URLSearchParams(window.location.search);
+    const username = window_parameter.get('username')
+
+    if (username) {
+        updateGameState(username);
+    }
+    else {
+        alert('Username parametri puuttuu');
+    }
+});
