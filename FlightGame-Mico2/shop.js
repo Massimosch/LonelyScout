@@ -16,6 +16,17 @@ let tradeArray={sell:[],buy:[]};
 const shopBox= document.getElementById("shopInventory");
 const playerBox=document.getElementById("playerInventory");
 const tradeWindow= document.getElementById("tradeWindow");
+const shopButton= document.getElementById("shopButton");
+
+const shopModal=document.getElementById("shopModal");
+shopButton.addEventListener("click",function(){
+  shopModal.style.display="flex";
+});
+window.onclick = function(event) {
+  if (event.target === shopModal) {
+    shopModal.style.display = "none";
+  }
+}
 async function getData(){
 
 }
@@ -35,24 +46,25 @@ function printInventory(inventory,box)
   itemContainer.appendChild(wepH);
   for (let item of inventory['weapons']){
     let p=document.createElement('p');
-    p.innerText=item.name;
+    p.innerText=item.name+", Tyyppi: "+item.type+", Kestävyys: "+item.durability+", Vahinko:"+item.damage+", Hinta: "+item.sale_value;
     let button= document.createElement('button');
     button.innerText="asdf";
-    itemContainer.appendChild(button);
-    itemContainer.appendChild(p);
+    let itemdiv= document.createElement('div');
+    itemdiv.style.backgroundColor="white";
+    itemdiv.appendChild(button);
+    itemdiv.appendChild(p);
+    itemContainer.appendChild(itemdiv);
     let thing=[button,p];
 
   button.addEventListener("click",function(){
     let addToTrade=false;
-      for (let i of thing){
-        if (tradeWindow.contains(i)){
-          itemContainer.appendChild(i);
+        if (tradeWindow.contains(itemdiv)){
+          itemContainer.appendChild(itemdiv);
         }
         else{
           addToTrade=true;
-          tradeWindow.appendChild(i);
+          tradeWindow.appendChild(itemdiv);
         }
-      }
       if (addToTrade)
       {
           if (inventory===shopInventory)
