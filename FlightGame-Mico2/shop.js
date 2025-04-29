@@ -2,12 +2,12 @@
 let shopInventory= {
     weapons:[{name:"a1", type:"kakka", sale_value:140, damage:"10",durability:"100"},
   {name:"a2", type:"kakka", sale_value:140, damage:"10",durability:"100"},
-{name:"a3", type:"kakka", sale_value:140, damage:"10",durability:"100"}]
+{name:"a3", type:"kakka", sale_value:140, damage:"10",durability:"100"}], consumables:[]
 };
 let playerInventory={
     weapons:[{name:"a1", type:"kakka", sale_value:140, damage:"10",durability:"100"},
   {name:"a2", type:"kakka", sale_value:140, damage:"10",durability:"100"},
-{name:"a3", type:"kakka", sale_value:140, damage:"10",durability:"100"}]
+{name:"a3", type:"kakka", sale_value:140, damage:"10",durability:"100"}],consumables: [{name:"apple",sale_value:10,heal_amount:"20", quantity:5},{name:"nakki",sale_value:10,heal_amount:"20", quantity:5}]
 };
 let gold=100;
 const goldText=document.getElementById("goldText");
@@ -16,8 +16,9 @@ let tradeArray={sell:[],buy:[]};
 const shopBox= document.getElementById("shopInventory");
 const playerBox=document.getElementById("playerInventory");
 const tradeWindow= document.getElementById("tradeWindow");
+const tradeBuying = document.getElementById("buying");
+const tradeSelling = document.getElementById("selling");
 const shopButton= document.getElementById("shopButton");
-
 const shopModal=document.getElementById("shopModal");
 shopButton.addEventListener("click",function(){
   shopModal.style.display="flex";
@@ -26,27 +27,32 @@ window.onclick = function(event) {
   if (event.target === shopModal) {
     shopModal.style.display = "none";
   }
-}
+};
 async function getData(){
 
 }
 function createShop()
 {
-  printInventory(shopInventory,shopBox);
-  printInventory(playerInventory, playerBox);
+  inventoryPrinter(shopInventory,shopBox,'weapons',"aseet");
+  inventoryPrinter(shopInventory,shopBox,'consumables',"käyttötavarat");
+  inventoryPrinter(playerInventory,playerBox,'weapons',"aseet");
+  inventoryPrinter(playerInventory,playerBox,'consumables',"käyttötavarat");
   goldText.innerText=`Gold: ${gold}`
 }
-function printInventory(inventory,box)
-{
+function inventoryPrinter(inventory,box,inventoryType,titleText){
   let itemContainer = document.createElement('div');
-  let wepH=document.createElement('h2');
-  let consH=document.createElement('h2');
-  wepH.innerText="aseet";
-  consH.innerText="käyttötavarat";
-  itemContainer.appendChild(wepH);
-  for (let item of inventory['weapons']){
+  let containerTitle=document.createElement('h2');
+  containerTitle.innerText=titleText;
+  itemContainer.appendChild(containerTitle);
+  for (let item of inventory[inventoryType]){
     let p=document.createElement('p');
-    p.innerText=item.name+", Tyyppi: "+item.type+", Kestävyys: "+item.durability+", Vahinko:"+item.damage+", Hinta: "+item.sale_value;
+    if (inventoryType==='weapons')
+    {
+      p.innerText=item.name+", Tyyppi: "+item.type+", Kestävyys: "+item.durability+", Vahinko:"+item.damage+", Hinta: "+item.sale_value;
+    }
+    else {
+      p.innerText=item.name;
+    }
     let button= document.createElement('button');
     button.innerText="asdf";
     let itemdiv= document.createElement('div');
@@ -54,8 +60,11 @@ function printInventory(inventory,box)
     itemdiv.appendChild(button);
     itemdiv.appendChild(p);
     itemContainer.appendChild(itemdiv);
-    let thing=[button,p];
-
+    itemButtonAddListener(button,item,itemdiv,itemContainer,inventory);
+  }
+  box.appendChild(itemContainer);
+}
+function itemButtonAddListener(button,item,itemdiv,itemContainer,inventory){
   button.addEventListener("click",function(){
     let addToTrade=false;
         if (tradeWindow.contains(itemdiv)){
@@ -63,7 +72,14 @@ function printInventory(inventory,box)
         }
         else{
           addToTrade=true;
-          tradeWindow.appendChild(itemdiv);
+          if (inventory===playerInventory)
+          {
+            tradeSelling.appendChild(itemdiv);
+          }
+          else {
+            tradeBuying.appendChild(itemdiv);
+          }
+
         }
       if (addToTrade)
       {
@@ -92,13 +108,9 @@ function printInventory(inventory,box)
             tradeArray.sell.splice(ind,1);
           }
           goldText.innerText=`Gold: ${gold}`;
-
       }
-      console.log(tradeArray);
+            console.log(tradeArray);
   });
-
-  }
-  box.appendChild(itemContainer);
 }
 function getPlayerInventory()
 {
