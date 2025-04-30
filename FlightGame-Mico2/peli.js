@@ -28,6 +28,7 @@ async function updateGameState(username) {
         const response = await fetch(
             `http://localhost:8000/load_game/${username}`, {method: "GET"});
         const data = await response.json();
+        console.log(data)
         const user_stats = data[0][0];
         let user_consumables
         if (!data[1]||data[1].length === 0) {

@@ -49,13 +49,17 @@ def get_checkpoints():
     print(checkpoints)
     return checkpoints
 
-def get_consumables(player_name): #funktio, joka tekee consumables listan
+def get_consumables(game_id): #funktio, joka tekee consumables listan
     q=f"""Select name, heal_amount, count(*) as 'quantity' 
-          from game inner join consumable_inventory on game.id=consumable_Inventory.game_id
-          inner join consumables on consumable_Inventory.item_id=consumables.id
-          WHERE game.player_name='{player_name}' AND game.is_ended IS FALSE
+          from  consumable_Inventory inner join consumables on consumable_Inventory.item_id=consumables.id
+          WHERE consumable_Inventory.game_id={game_id} 
           GROUP BY consumables.name"""
     consumables=exequte_this_query(q)
     return consumables
+
+
+
+
+
 
 

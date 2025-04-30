@@ -6,13 +6,18 @@ CORS(app) ##Cross Origin Resource Sharing, when Javascript works in different po
 
 @app.route('/load_game/<player_name>')
 def load_game(player_name):
-    player_stats = lonely_scout_backend_functions.get_game(player_name)
-    player_consumables=lonely_scout_backend_functions.get_consumables(player_name)
-    result=[player_stats,player_consumables]
+    game_data={}
+    result = lonely_scout_backend_functions.get_game(player_name)
     if not result:
         ##korjaa palautus järkevämmäksi.
         return result, 404
-    return result
+    else:
+        game_data["player_stats"]=result[0]
+        game_id=game_data["player_stats"]["id"]
+        consumables=lonely_scout_backend_functions.get_consumables(game_id)
+        game_data["consumables"]=consumables
+        return game_data
+
 
 @app.route('/save_game/<player_name>', methods=['POST'])
 def save_game(player_name):
