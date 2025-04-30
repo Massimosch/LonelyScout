@@ -67,7 +67,7 @@
 //Trade things
     let tradeArray = {sell: [], buy: []};
     const tradeWindow = document.getElementById("tradeWindow");
-    const tradeBuying = document.getElementById("buying");
+    let tradeBuying = document.getElementById("buying");
     const tradeBuyingText = document.getElementById("buyingText");
     const tradeSellingText = document.getElementById("sellingText");
     const tradeSelling = document.getElementById("selling");
@@ -127,68 +127,50 @@
       itemdiv.appendChild(p);
       itemdiv.id=item.toString();
       itemContainer.appendChild(itemdiv);
-      itemButtonAddListener(button, item, itemdiv, itemContainer, inventory);
+      if (inventory===shopInventory){
+        itemButtonFunction(button,item,itemdiv,itemContainer,tradeArray.buy,tradeBuying);
+      }
+      else if(inventory===playerInventory){
+        itemButtonFunction(button,item, itemdiv,itemContainer,tradeArray.sell,tradeSelling);
+      }
     }
     box.appendChild(itemContainer);
   }
 
-//gives item buttons event listeners for adding into and out of trade window
-  function itemButtonAddListener(button, item, itemdiv, itemContainer, inventory) {
-    button.addEventListener("click", function() {
-      let addToTrade = false;
-      console.log(tradeWindow)
+  //gives item buttons event listeners for adding into and out of trade window
+  function itemButtonFunction(button,item,itemdiv,itemContainer,tradesArray,tradeContainer){
+    button.addEventListener("click", function(){
+    let addToTrade = false;
+      console.log(tradeWindow);
+      console.log(tradeContainer);
       if (tradeWindow.contains(itemdiv)) {
         itemContainer.appendChild(itemdiv);
-      } else {
+      }
+      else {
         addToTrade = true;
-        if (inventory === playerInventory) {
-          tradeSelling.appendChild(itemdiv);
-
-        } else {
-          tradeBuying.appendChild(itemdiv);
-        }
+        tradeContainer.appendChild(itemdiv);
         tradeButt.style.display="block";
       }
       if (addToTrade) {
-        if (inventory === shopInventory) {
-          gold -= item.sale_value;
-          tradeArray['buy'].push(item);
-        } else {
-          gold += item.sale_value;
-          tradeArray['sell'].push(item);
-        }
+        gold -= item.sale_value;
+        tradesArray.push(item);
         goldText.innerText = `Gold: ${gold}`;
-      } else {
-        if (inventory === shopInventory) {
-          let ind = tradeArray.buy.indexOf(item);
-          gold += item.sale_value;
-          tradeArray.buy.splice(ind, 1);
-        } else {
-          let ind = tradeArray.sell.indexOf(item);
-          gold -= item.sale_value;
-          tradeArray.sell.splice(ind, 1);
-        }
+      }
+      else {
+        let ind = tradesArray.indexOf(item);
+        gold += item.sale_value;
+        tradesArray.splice(ind, 1);
         goldText.innerText = `Gold: ${gold}`;
       }
       console.log(tradeArray);
       //unnecessary poo?
-      if (tradeArray.sell.length === 0) {
-        tradeSellingText.innerHTML = "";
+      if (tradesArray.length === 0) {
+        tradeContainer.style.display="none";
       } else {
-        tradeSellingText.innerHTML = "Myytävät";
+        tradeContainer.style.display = "Block";
       }
-      if (tradeArray.buy.length === 0) {
-        tradeBuyingText.innerHTML = "";
-      } else {
-        tradeBuyingText.innerHTML = "Ostettavat";
-      }
-      if (tradeArray.sell.length===0 && tradeArray.buy.length===0){
-        tradeButt.style.display="none";
-      }
-    });
+      })
   }
-
-
   function unloadShop() {
 
   }
