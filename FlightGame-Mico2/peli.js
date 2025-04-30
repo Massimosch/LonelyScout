@@ -69,34 +69,35 @@ async function updateGameState(username) {
     locationName.innerHTML = `${userData.player_stats.checkpoint_name}`;
     locationImage.src = `images/${userData.player_stats.checkpoint_name}.png`;
 
-    for (let consumable of user_consumables) {
-      const item = consumable.querySelector(`#${consumable.name}`);
-      const item_quantity = item.querySelector('.quantity');
-      item_quantity.innerHTML = `${consumable.quantity}`;
-    }
-    let isProcessing = false;
+//    for (let consumable of user_consumables) {
+//      const item = consumable.querySelector(`#${consumable.name}`);
+//      const item_quantity = item.querySelector('.quantity');
+//      item_quantity.innerHTML = `${consumable.quantity}`;
+//    }
+/*    let isProcessing = false;
     consumables_buttons.forEach(consumable_button => {
-      consumable_button.addEventListener('click', () => {
-        if (isProcessing) return;
-        isProcessing = true;
-        for (let item of user_consumables) {
-          if (item.name === consumable_button.id) {
-            if (item.quantity > 0) {
-              item.quantity -= 1;
-              const quantityElement = consumable_button.querySelector(
-                  '.quantity');
-              quantityElement.textContent = item.quantity;
-              console.log(userData.health);
-              userData.health += item.heal_amount;
-              health.innerHTML = `TERVEYS: ${userData.health}`;
-            } else {
-              alert('You dont have this item');
+          consumable_button.addEventListener('click', () => {
+            if (isProcessing) return;
+            isProcessing = true;
+            for (let item of user_consumables) {
+              if (item.name === consumable_button.id) {
+                if (item.quantity > 0) {
+                  item.quantity -= 1;
+                  const quantityElement = consumable_button.querySelector(
+                      '.quantity');
+                  quantityElement.textContent = item.quantity;
+                  console.log(userData.health);
+                  userData.health += item.heal_amount;
+                  health.innerHTML = `TERVEYS: ${userData.health}`;
+                } else {
+                  alert('You dont have this item');
+                }
+              }
+              isProcessing = false;
             }
-          }
-          isProcessing = false;
-        }
-      });
-    });
+          });
+        },
+    );*/
   } catch (e) {
     console.log(e);
   }

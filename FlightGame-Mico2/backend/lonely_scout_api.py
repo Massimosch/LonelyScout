@@ -20,10 +20,10 @@ def load_game(player_name):
 @app.route('/save_game/<game_id>', methods=['POST'])
 def save_game(game_id):
     last_checkpoint = lonely_scout_backend_functions.get_last_checkpoint()
-    args = request.args
-    current_checkpoint_id = int(args.get("current_checkpoint_id"))
-    health = int(args.get("health"))
-    score = int(args.get("score"))
+    data = request.json
+    current_checkpoint_id = int(data["current_checkpoint_id"])
+    health = int(data["health"])
+    score = int(data["score"])
     is_ended = True if current_checkpoint_id == last_checkpoint else False
     lonely_scout_backend_functions.update_game(game_id, current_checkpoint_id, health, score, is_ended)
     return '', 200
