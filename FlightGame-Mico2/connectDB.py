@@ -52,5 +52,7 @@ def create_enemies():
         enemy = CreateEnemy(name, attack_power, weakness, health)
         enemies.append(enemy)
     return enemies
+
+
 print(create_checkpoints())
 print(create_enemies())

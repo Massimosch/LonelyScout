@@ -58,4 +58,3 @@ def get_consumables(player_name): #funktio, joka tekee consumables listan
     consumables=exequte_this_query(q)
     return consumables
 
-get_game('kul')
