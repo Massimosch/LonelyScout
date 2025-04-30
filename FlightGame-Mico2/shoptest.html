@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="Shop_Style.css">
-    <script src="shop.js" defer></script>
+    <script src="testiin.js" defer type="module"></script>
 </head>
 <body>
-    <button id="shopButton">takaisin</button>
-  <div class="container">
+    <button id="shopButton">shop</button>
+    <div class="modal" id="shopModal">
+
+  <div class="container" id="shopContainer">
+<span class="close">&times;</span>
       <div class="item" id="shopInventory">
           <h1>Kaupan tavarat</h1>
       </div>
@@ -16,10 +19,20 @@
           <h1>Kaupankäynti</h1>
           <p id="goldText"></p>
 
+          <div id="buying" class="buysell">
+          <h2 id="buyingText" class="buysell"></h2>
+          </div>
+
+          <div id="selling" class="buysell">
+          <h2 id="sellingText" class="buysell"></h2>
+          </div>
+
       </div>
       <div class="item" id="playerInventory">
           <h1>Pelaajan tavarat</h1>
       </div>
+
   </div>
+    </div>
 </body>
 </html>
