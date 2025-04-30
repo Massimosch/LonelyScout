@@ -13,11 +13,18 @@ def exequte_this_query(query):
         cursor.close()
     return response
 
+## Tällä queryllä saahaan checkpointin nimi........ se olisi hyvä olla "get gamessa"..
+##SELECT checkpoint.name FROM game join checkpoint ON game.current_checkpoint = checkpoint.id WHERE game.player_name = '{player_name}'
+
 def get_game(player_name):
-    q = f"SELECT * FROM game WHERE player_name = '{player_name}' AND is_ended IS FALSE"
-    result = [exequte_this_query(q),get_consumables(player_name)] #Nikita: laitoin tulokselle consumables listan
-    print(result)
+    #q = f"SELECT * FROM game WHERE player_name = '{player_name}' AND is_ended IS FALSE"
+    query = f"""SELECT game.*, checkpoint.name as checkpoint_name FROM game LEFT JOIN checkpoint ON game.current_checkpoint = checkpoint.id
+                WHERE game.player_name = '{player_name}'"""
+    player_data = exequte_this_query(query)
+    consumable_data = get_consumables(player_name)
+    result = [player_data, consumable_data]
     return result
+    
 
 def update_game(player_name, current_checkpoint, health, score, is_ended):
     update_query = f"UPDATE game SET current_checkpoint = {current_checkpoint}, health = {health}, score = {score}, is_ended = {is_ended} WHERE player_name = '{player_name}' AND is_ended IS FALSE"
@@ -57,5 +64,3 @@ def get_consumables(player_name): #funktio, joka tekee consumables listan
           GROUP BY consumables.name"""
     consumables=exequte_this_query(q)
     return consumables
-
-get_game('kul')

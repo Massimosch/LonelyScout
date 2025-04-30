@@ -4,6 +4,7 @@ const health = document.querySelector('#health');
 const score = document.querySelector('#score');
 const checkpoint = document.querySelector('#checkpoint');
 const takaisinBtn = document.querySelector('#back_to_menu');
+const locationName = document.querySelector('#location_name');
 const inventory = document.querySelector('#inventory');
 const liikuBtn = document.querySelector('#move');
 
@@ -26,7 +27,8 @@ async function updateGameState(username) {
 
         health.innerHTML = `TERVEYS: ${userData.health}`;
         score.innerHTML = `SCORE: ${userData.score}`;
-        checkpoint.innerHTML = `CHECKPOINT: ${userData.current_checkpoint}`;
+        checkpoint.innerHTML = `CHECKPOINT: ${userData.checkpoint_name}`;
+        locationName.innerHTML = `${userData.checkpoint_name}`
     }
     catch (e) {
         console.log(e)
