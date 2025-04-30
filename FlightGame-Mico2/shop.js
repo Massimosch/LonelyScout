@@ -65,7 +65,7 @@ let gold = 100;
 const goldText = document.getElementById('goldText');
 
 //Trade things
-let tradeArray = {sell: [], buy: []};
+let tradeArray = {sell: {weapons:[],consumables:[]}, buy: {weapons:[],consumables:[]}};
 const tradeWindow = document.getElementById('tradeWindow');
 let tradeBuying = document.getElementById('buying');
 const tradeSelling = document.getElementById('selling');
@@ -87,77 +87,87 @@ shopButt.onclick = function() {
 //Create shop elements
 function createShop() {
   shopCreated = true;
-  inventoryPrinter(shopInventory, shopBox, 'weapons', 'aseet');
-  inventoryPrinter(shopInventory, shopBox, 'consumables', 'käyttötavarat');
-  inventoryPrinter(playerInventory, playerBox, 'weapons', 'aseet');
-  inventoryPrinter(playerInventory, playerBox, 'consumables', 'käyttötavarat');
+  inventoryPrinter(shopInventory, shopBox);
+  inventoryPrinter(playerInventory, playerBox);
   goldText.innerText = `Gold: ${gold}`;
 }
 
 //Creates containers, text and buttons for items
-function inventoryPrinter(inventory, box, inventoryType, titleText) {
-  let itemContainer = document.createElement('div');
-  let containerTitle = document.createElement('h2');
-  containerTitle.classList.add('shoph');
-  containerTitle.innerText = titleText;
-  itemContainer.appendChild(containerTitle);
-  for (let item of inventory[inventoryType]) {
-    let p = document.createElement('p');
+function inventoryPrinter(inventory, box) {
+  let weaponContainer = document.createElement('div');
+  let consumableContainer = document.createElement('div');
+  let weaponContainerHeader = document.createElement('h2');
+  let consumableContainerHeader = document.createElement('h2');
+  weaponContainerHeader.classList.add('shoph');
+  consumableContainerHeader.classList.add('shoph');
+  weaponContainerHeader.innerText = "Aseet";
+  weaponContainer.appendChild(weaponContainerHeader);
+  createInventoryInfo(inventory,'weapons',weaponContainer);
+  consumableContainerHeader.innerText="Käyttötavarat";
+  consumableContainer.appendChild(consumableContainerHeader);
+  createInventoryInfo(inventory,'consumables',consumableContainer);
+  box.appendChild(weaponContainer);
+  box.appendChild(consumableContainer);
+}
+function createInventoryInfo(inventory,inventoryType,itemContainer) {
+   for (let item of inventory[inventoryType]) {
+    let itemInfoParagraph = document.createElement('p');
     if (inventoryType === 'weapons') {
-      p.innerText = item.name + ', Tyyppi: ' + item.type + ', Kestävyys: ' +
+      itemInfoParagraph.innerText = item.name + ', Tyyppi: ' + item.type + ', Kestävyys: ' +
           item.durability + ', Vahinko:' + item.damage + ', Hinta: ' +
           item.sale_value;
-    } else {
-      p.innerText = item.name;
     }
-    let button = document.createElement('button');
-    if (inventory === shopInventory) {
-      button.innerText = 'Osta';
-    } else {
-      button.innerText = 'Myy';
+    else {
+      itemInfoParagraph.innerText = item.name;
     }
-
-    let itemdiv = document.createElement('div');
-    itemdiv.classList.add('itemInfo');
-    itemdiv.appendChild(button);
-    itemdiv.appendChild(p);
-    itemdiv.id = item.toString();
-    itemContainer.appendChild(itemdiv);
+    let itemButton = document.createElement('button');
+    itemButton.innerText="Siirrä koriin";
+    let itemDiv = document.createElement('div');
+    itemDiv.classList.add('itemInfo');
+    itemDiv.appendChild(itemButton);
+    itemDiv.appendChild(itemInfoParagraph);
+    itemContainer.appendChild(itemDiv);
     if (inventory === shopInventory) {
-      addToTrade(button, item, itemdiv, itemContainer, tradeArray.buy,
-          tradeBuying);
+      addToTrade(itemButton, item, itemDiv, itemContainer, tradeArray.buy[inventoryType],
+          tradeBuying,item.sale_value);
     } else if (inventory === playerInventory) {
-      addToTrade(button, item, itemdiv, itemContainer, tradeArray.sell,
-          tradeSelling);
+      addToTrade(itemButton, item, itemDiv, itemContainer, tradeArray.sell[inventoryType],
+          tradeSelling,-item.sale_value);
     }
   }
-  box.appendChild(itemContainer);
 }
 
-function addToTrade(button, item, itemdiv, itemContainer, tradesArray, tradeContainer) {
+function addToTrade(button, item, itemdiv, itemContainer, tradesArray, tradeContainer,sale_value) {
     button.onclick=function() {
+    button.innerText="Poista";
     console.log(tradeWindow);
     console.log(tradeContainer);
     tradeContainer.appendChild(itemdiv);
-    gold -= item.sale_value;
+    gold -= sale_value;
     tradesArray.push(item);
     goldText.innerText = `Gold: ${gold}`;
     tradeContainer.style.display = 'Block';
-    removeFromTrade(button, item,itemdiv,itemContainer,tradesArray,tradeContainer);
+    removeFromTrade(button, item,itemdiv,itemContainer,tradesArray,tradeContainer,sale_value);
   };
 }
 
-function removeFromTrade(button, item, itemdiv, itemContainer, tradesArray, tradeContainer){
+function removeFromTrade(button, item, itemdiv, itemContainer, tradesArray, tradeContainer,sale_value){
   button.onclick= function() {
+    button.innerText="Siirrä koriin";
     itemContainer.appendChild(itemdiv);
     let ind = tradesArray.indexOf(item);
-    gold += item.sale_value;
+    gold += sale_value;
     tradesArray.splice(ind, 1);
     goldText.innerText = `Gold: ${gold}`;
     if (tradesArray.length === 0) {
       tradeContainer.style.display = 'none';
     }
     addToTrade(button, item, itemdiv, itemContainer, tradesArray,
-        tradeContainer)
+        tradeContainer,sale_value)
   };
+}
+function completeTrade(type){
+  for (let item of tradeArray.buy[type]){
+
+  }
 }
