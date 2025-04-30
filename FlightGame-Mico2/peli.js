@@ -28,7 +28,7 @@ async function updateGameState(username) {
         health.innerHTML = `TERVEYS: ${userData.health}`;
         score.innerHTML = `SCORE: ${userData.score}`;
         checkpoint.innerHTML = `CHECKPOINT: ${userData.checkpoint_name}`;
-        locationName.innerHTML = `${userData.checkpoint_name}`
+        locationName.innerHTML = `${userData.checkpoint_name}`;
     }
     catch (e) {
         console.log(e)
