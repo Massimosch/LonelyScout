@@ -1,7 +1,5 @@
 ﻿'use strict'
-export class Shop {
-  constructor() {
-    this.shopInventory = {
+    let shopInventory = {
       weapons: [
         {
           name: "a1",
@@ -25,7 +23,7 @@ export class Shop {
           durability: "100"
         }], consumables: []
     };
-    this.playerInventory = {
+    let playerInventory ={
       weapons: [
         {
           name: "a1",
@@ -56,34 +54,40 @@ export class Shop {
           quantity: 5
         }, {name: "nakki", sale_value: 10, heal_amount: "20", quantity: 5}]
     };
-    this.gold = 100;
-    this.goldText = document.getElementById("goldText");
-    this.articleInfoArray = {
+    let gold = 100;
+    const goldText = document.getElementById("goldText");
+    let articleInfoArray = {
       weapon: {h: "Aseet: "},
       consumable: {h: "Käyttötavarat: "}
     };
-    this.tradeArray = {sell: [], buy: []};
-    this.shopBox = document.getElementById("shopInventory");
-    this.playerBox = document.getElementById("playerInventory");
-    this.tradeWindow = document.getElementById("tradeWindow");
-    this.tradeBuying = document.getElementById("buying");
-    this.tradeBuyingText = document.getElementById("buyingText");
-    this.tradeSellingText = document.getElementById("sellingText");
-    this.tradeSelling = document.getElementById("selling");
-
-  }
-
-  createShop() {
-    this.inventoryPrinter(this.shopInventory, this.shopBox, 'weapons', "aseet");
-    this.inventoryPrinter(this.shopInventory, this.shopBox, 'consumables', "käyttötavarat");
-    this.inventoryPrinter(this.playerInventory, this.playerBox, 'weapons', "aseet");
-    this.inventoryPrinter(this.playerInventory, this.playerBox, 'consumables',
+    let tradeArray = {sell: [], buy: []};
+    const shopBox = document.getElementById("shopInventory");
+    const playerBox = document.getElementById("playerInventory");
+    const tradeWindow = document.getElementById("tradeWindow");
+    const tradeBuying = document.getElementById("buying");
+    const tradeBuyingText = document.getElementById("buyingText");
+    const tradeSellingText = document.getElementById("sellingText");
+    const tradeSelling = document.getElementById("selling");
+    const shopModal=document.getElementById("shopModal");
+  window.onclick = function(event) {
+  if (event.target === shopModal) {
+    shopModal.style.display="none";
+  }}
+shopButt.onclick= function(){
+  createShop();
+  modal.style.display="flex";
+};
+  function createShop() {
+    inventoryPrinter(shopInventory, shopBox, 'weapons', "aseet");
+    inventoryPrinter(shopInventory, shopBox, 'consumables', "käyttötavarat");
+    inventoryPrinter(playerInventory, playerBox, 'weapons', "aseet");
+    inventoryPrinter(playerInventory, playerBox, 'consumables',
         "käyttötavarat");
-    this.goldText.innerText = `Gold: ${this.gold}`
+    goldText.innerText = `Gold: ${gold}`
   }
 
 
-  inventoryPrinter(inventory, box, inventoryType, titleText) {
+  function inventoryPrinter(inventory, box, inventoryType, titleText) {
     let itemContainer = document.createElement('div');
     let containerTitle = document.createElement('h2');
     containerTitle.innerText = titleText;
@@ -98,81 +102,86 @@ export class Shop {
         p.innerText = item.name;
       }
       let button = document.createElement('button');
-      button.innerText = "asdf";
+      if (inventory===shopInventory)
+      {
+        button.innerText = "Myy";
+      }
+
       let itemdiv = document.createElement('div');
       itemdiv.style.backgroundColor = "white";
       itemdiv.appendChild(button);
       itemdiv.appendChild(p);
+      itemdiv.id=item.toString();
       itemContainer.appendChild(itemdiv);
-      this.itemButtonAddListener(button, item, itemdiv, itemContainer, inventory);
+      itemButtonAddListener(button, item, itemdiv, itemContainer, inventory);
     }
     box.appendChild(itemContainer);
   }
 
-  itemButtonAddListener(button, item, itemdiv, itemContainer, inventory) {
+  function itemButtonAddListener(button, item, itemdiv, itemContainer, inventory) {
     button.addEventListener("click", function() {
       let addToTrade = false;
-      if (this.tradeWindow.contains(itemdiv)) {
+      console.log(tradeWindow)
+      if (tradeWindow.contains(itemdiv)) {
         itemContainer.appendChild(itemdiv);
       } else {
         addToTrade = true;
-        if (inventory === this.playerInventory) {
-          this.tradeSelling.appendChild(itemdiv);
+        if (inventory === playerInventory) {
+          tradeSelling.appendChild(itemdiv);
 
         } else {
-          this.tradeBuying.appendChild(itemdiv);
+          tradeBuying.appendChild(itemdiv);
 
         }
 
       }
       if (addToTrade) {
-        if (inventory === this.shopInventory) {
-          this.gold -= item.sale_value;
-          this.tradeArray['buy'].push(item);
+        if (inventory === shopInventory) {
+          gold -= item.sale_value;
+          tradeArray['buy'].push(item);
         } else {
-          this.gold += item.sale_value;
-          this.tradeArray['sell'].push(item);
+          gold += item.sale_value;
+          tradeArray['sell'].push(item);
         }
-        this.goldText.innerText = `Gold: ${this.gold}`;
+        goldText.innerText = `Gold: ${gold}`;
       } else {
-        if (inventory === this.shopInventory) {
-          let ind = this.tradeArray.buy.indexOf(item);
-          this.gold += item.sale_value;
-          this.tradeArray.buy.splice(ind, 1);
+        if (inventory === shopInventory) {
+          let ind = tradeArray.buy.indexOf(item);
+          gold += item.sale_value;
+          tradeArray.buy.splice(ind, 1);
         } else {
-          let ind = this.tradeArray.sell.indexOf(item);
-          this.gold -= item.sale_value;
-          this.tradeArray.sell.splice(ind, 1);
+          let ind = tradeArray.sell.indexOf(item);
+          gold -= item.sale_value;
+          tradeArray.sell.splice(ind, 1);
         }
-        this.goldText.innerText = `Gold: ${this.gold}`;
+        goldText.innerText = `Gold: ${gold}`;
       }
-      console.log(this.tradeArray);
+      console.log(tradeArray);
       //unnecessary poo?
-      if (this.tradeArray.sell.length === 0) {
-        this.tradeSellingText.innerHTML = "";
+      if (tradeArray.sell.length === 0) {
+        tradeSellingText.innerHTML = "";
       } else {
-        this.tradeSellingText.innerHTML = "Myytävät";
+        tradeSellingText.innerHTML = "Myytävät";
       }
-      if (this.tradeArray.buy.length === 0) {
-        this.tradeBuyingText.innerHTML = "";
+      if (tradeArray.buy.length === 0) {
+        tradeBuyingText.innerHTML = "";
       } else {
-        this.tradeBuyingText.innerHTML = "Ostettavat";
+        tradeBuyingText.innerHTML = "Ostettavat";
       }
     });
   }
 
 
-  unloadShop() {
+  function unloadShop() {
     
   }
 
 
-  getPlayerInventory() {
+  function getPlayerInventory() {
     //gets player inventory from db
   }
 
 
-  completeTransaction() {
+  function completeTransaction() {
     //something in here to update the inventories for good if money not negative
   }
-}
