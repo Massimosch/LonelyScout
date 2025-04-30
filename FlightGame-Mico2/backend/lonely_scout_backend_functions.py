@@ -15,7 +15,7 @@ def exequte_this_query(query):
 
 def get_game(player_name):
     q = f"SELECT * FROM game WHERE player_name = '{player_name}' AND is_ended IS FALSE"
-    result = [exequte_this_query(q),get_consumables(player_name)] #Nikita: laitoin tulokselle consumables listan
+    result = exequte_this_query(q)
     print(result)
     return result
 
