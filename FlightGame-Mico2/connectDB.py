@@ -1,17 +1,18 @@
 from os import getenv
-import mariadb
+import mysql.connector
 from dotenv import load_dotenv
 from enemy import CreateEnemy
 from checkpoint import Checkpoint
 
 load_dotenv()
 
-yhteys = mariadb.connect(
+yhteys = mysql.connector.connect(
          host=getenv('DB_HOST'),
          user=getenv('DB_USER'),
-         port= int(getenv('DB_PORT')),
+         port= getenv('DB_PORT'),
          database=getenv('DB_DATABASE'),
          password=getenv('DB_PASSWORD'),
+         collation='utf8mb4_general_ci',
          autocommit=True
          )
 
@@ -51,5 +52,7 @@ def create_enemies():
         enemy = CreateEnemy(name, attack_power, weakness, health)
         enemies.append(enemy)
     return enemies
+
+
 print(create_checkpoints())
 print(create_enemies())

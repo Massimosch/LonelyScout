@@ -7,7 +7,7 @@
   <script src="peli.js" defer></script>
 </head>
 <body>
-<button id="back_to_menu">Takaisin päävalikkoon</button>
+
 <div class="game-container">
   <div class="status-map-container">
     <div class="status-box">
@@ -21,15 +21,36 @@
         <option value="Miekka">Miekka</option>
         <option value="Jousi">Jousi</option>
       </select>
-      <p id="inventory">REPPU: MIEKKA, RUOKA</p>
-      <img src="images/adventurer.png" alt="adventurer kuva">
+      <div id="consumables">
+        <p>CONSUMABLES: </p>
+        <div id="nakki" class="consumable-container">
+          <span>🌭</span>
+          <span class="quantity">0</span>
+          <div class="consumable-popup">Sale value:2  Heal amount:5</div>
+        </div>
+        <div id="parantava-juoma" class="consumable-container">
+          <span>🧪</span>
+          <span class="quantity">0</span>
+          <div class="consumable-popup">Sale value:30  Heal amount:25</div>
+        </div>
+        <div id="piirakka" class="consumable-container">
+          <span>🥧</span>
+          <span class="quantity">0</span>
+          <div class="consumable-popup">Sale value:20  Heal amount:15</div>
+        </div>
+      </div>
+        <img src="images/adventurer.png" alt="adventurer kuva">
     </div>
     <div class="map-box">
-      <h2>SUMUINEN METSÄ</h2>
-      <img src="images/sumuinen_metsä.png" alt="Map Image">
+      <h2 id="location_name"></h2>
+      <img id="location_image" src="" alt="Map Image">
     </div>
+  </div>
+  <div class="player-controls">
+    <button id="move">Liiku</button>
     <button id="shop">Avaa kauppa</button>
-    
+    <button id="help">Pelin ohjeet</button>
+    <button id="back_to_menu">Päävalikkoon</button>
   </div>
 </div>
 </body>

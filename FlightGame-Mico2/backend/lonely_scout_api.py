@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import lonely_scout_backend_functions
 app = Flask(__name__)
@@ -6,25 +6,27 @@ CORS(app) ##Cross Origin Resource Sharing, when Javascript works in different po
 
 @app.route('/load_game/<player_name>')
 def load_game(player_name):
+    game_data={}
     result = lonely_scout_backend_functions.get_game(player_name)
     if not result:
         ##korjaa palautus järkevämmäksi.
         return result, 404
-    return result
+    game_data["player_stats"] = result[0]
+    game_id = game_data["player_stats"]["id"]
+    consumables=lonely_scout_backend_functions.get_consumables(game_id)
+    game_data["consumables"]=consumables
+    return game_data
 
-@app.route('/save_game/<player_name>', methods=['POST'])
-def save_game(player_name):
+@app.route('/save_game/<game_id>', methods=['POST'])
+def save_game(game_id):
     last_checkpoint = lonely_scout_backend_functions.get_last_checkpoint()
     args = request.args
     current_checkpoint_id = int(args.get("current_checkpoint_id"))
     health = int(args.get("health"))
     score = int(args.get("score"))
     is_ended = True if current_checkpoint_id == last_checkpoint else False
-    result = lonely_scout_backend_functions.update_game(player_name, current_checkpoint_id, health, score, is_ended)
-    if not result:
-        ##korjaa palautus järkevämmäksi.
-        return result, 404
-    return result
+    lonely_scout_backend_functions.update_game(game_id, current_checkpoint_id, health, score, is_ended)
+    return '', 200
 
 @app.route('/new_game/<player_name>', methods=['POST'])
 def start_new_game(player_name):
@@ -47,7 +49,10 @@ def get_random_enemy():
     result = lonely_scout_backend_functions.get_random_enemy()
     return result
 
-
+@app.route('/move/<player_name>')
+def move_to_checkpoint(player_name):
+    result = lonely_scout_backend_functions.move_to_checkpoint(player_name)
+    return result
 
 
 if __name__ == '__main__':
