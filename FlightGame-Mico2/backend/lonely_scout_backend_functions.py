@@ -50,11 +50,12 @@ def get_checkpoints():
     return checkpoints
 
 def get_consumables(player_name): #funktio, joka tekee consumables listan
-    q=f"""Select name, sale_value, heal_amount, count(*) as 'quantity' 
+    q=f"""Select name, heal_amount, count(*) as 'quantity' 
           from game inner join consumable_inventory on game.id=consumable_Inventory.game_id
           inner join consumables on consumable_Inventory.item_id=consumables.id
           WHERE game.player_name='{player_name}' AND game.is_ended IS FALSE
           GROUP BY consumables.name"""
     consumables=exequte_this_query(q)
     return consumables
+
 

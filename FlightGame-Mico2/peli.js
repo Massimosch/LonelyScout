@@ -6,6 +6,7 @@ const score = document.querySelector('#score');
 const checkpoint = document.querySelector('#checkpoint');
 const takaisinBtn = document.querySelector('#back_to_menu');
 const inventory = document.querySelector('#consumables');
+const consumables_buttons=document.querySelectorAll('.consumable-container') ;
 
 
 
@@ -28,8 +29,18 @@ async function updateGameState(username) {
             `http://localhost:8000/load_game/${username}`, {method: "GET"});
         const data = await response.json();
         const user_stats = data[0][0];
-        const user_consumables = data[1]
-
+        let user_consumables
+        if (!data[1]||data[1].length === 0) {
+            user_consumables=[
+                {'name': 'nakki', 'heal_amount': 5, 'quantity': 0},
+                {'name': 'parantava-juoma', 'heal_amount': 25, 'quantity': 0},
+                {'name': 'piirakka', 'heal_amount': 15, 'quantity': 0}
+            ]
+        }
+        else {
+            user_consumables=data[1]
+        }
+        console.log(user_consumables)
 
         health.innerHTML = `TERVEYS: ${user_stats.health}`;
         score.innerHTML = `SCORE: ${user_stats.score}`;
@@ -41,20 +52,25 @@ async function updateGameState(username) {
             const item_quantity=item.querySelector('.quantity');
             item_quantity.innerHTML = `${consumable.quantity}`;
         }
-        const consumables_buttons=document.querySelectorAll('.consumable-container') ;
         let isProcessing=false
         consumables_buttons.forEach(consumable_button=>{
-            consumable_button.addEventListener('click',async()=>{
+            consumable_button.addEventListener('click',()=>{
                 if (isProcessing) return;
                 isProcessing = true;
                 for (let item of user_consumables){
                    if (item.name===consumable_button.id){
-                       item.quantity-=1
-                       const quantityElement = consumable_button.querySelector('.quantity')
-                       quantityElement.textContent=item.quantity
-                       console.log(user_stats.health)
-                       user_stats.health+=item.heal_amount
-                       health.innerHTML = `TERVEYS: ${user_stats.health}`
+                       if (item.quantity>0) {
+                           item.quantity -= 1
+                           const quantityElement = consumable_button.querySelector(
+                               '.quantity')
+                           quantityElement.textContent = item.quantity
+                           console.log(user_stats.health)
+                           user_stats.health += item.heal_amount
+                           health.innerHTML = `TERVEYS: ${user_stats.health}`
+                       }
+                   else {
+                       alert('You dont have this item')
+                       }
                    }
                 isProcessing=false
                }
