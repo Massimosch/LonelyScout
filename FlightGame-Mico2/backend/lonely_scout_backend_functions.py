@@ -1,4 +1,5 @@
 import database
+import json
 
 
 def exequte_this_query(query):
@@ -14,15 +15,15 @@ def exequte_this_query(query):
     return response
 
 def get_game(player_name):
-    q = f"SELECT * FROM game WHERE player_name = '{player_name}' AND is_ended IS FALSE"
-    result = exequte_this_query(q)
-    print(result)
-    return result
+    #q = f"SELECT * FROM game WHERE player_name = '{player_name}' AND is_ended IS FALSE"
+    query = f"""SELECT game.*, checkpoint.name as checkpoint_name FROM game LEFT JOIN checkpoint ON game.current_checkpoint = checkpoint.id
+                WHERE game.player_name = '{player_name}' AND game.is_ended is FALSE"""
+    player_data = exequte_this_query(query)
+    return player_data
 
-def update_game(player_name, current_checkpoint, health, score, is_ended):
-    update_query = f"UPDATE game SET current_checkpoint = {current_checkpoint}, health = {health}, score = {score}, is_ended = {is_ended} WHERE player_name = '{player_name}' AND is_ended IS FALSE"
-    result = exequte_this_query(update_query)
-    return result
+def update_game(id, current_checkpoint, health, score, is_ended):
+    update_query = f"UPDATE game SET current_checkpoint = {current_checkpoint}, health = {health}, score = {score}, is_ended = {is_ended} WHERE id = {id}"
+    exequte_this_query(update_query)
 
 def start_new_game(player_name, current_checkpoint, health, score):
     insert_query = f"INSERT INTO game (player_name, current_checkpoint, health, score) VALUES('{player_name}', {current_checkpoint}, {health}, {score})"
@@ -42,6 +43,9 @@ def get_random_enemy():
 def get_last_checkpoint():
     q = f"SELECT id FROM checkpoint ORDER BY id DESC LIMIT 1"
     result = exequte_this_query(q)
+    if result:
+        return result[0]['id']
+    return None
 
 def get_checkpoints():
     q_for_checkpoints = "SELECT * FROM checkpoint"
@@ -57,9 +61,21 @@ def get_consumables(game_id): #funktio, joka tekee consumables listan
     consumables=exequte_this_query(q)
     return consumables
 
+def move_to_checkpoint(player_name):
+    query = f"SELECT current_checkpoint FROM game WHERE player_name = '{player_name}'"
+    result = exequte_this_query(query)
+    last_checkpoint = get_last_checkpoint()
+    player_data = get_game(player_name)
 
+    if result:
+        current_checkpoint = result[0]['current_checkpoint']
+    else:
+        return json.dumps({"message": 'Pelaaja tietoja ei löydy'}), 404
 
-
-
-
-
+    if current_checkpoint < last_checkpoint:
+        new_checkpoint = int(current_checkpoint) + 1
+        update_game(player_name, new_checkpoint, health=100, score=100, is_ended=False)
+        return json.dumps({"message": f'Liikuttiin {new_checkpoint}'}), 200
+    else:
+        update_game(player_name, current_checkpoint, health=100, score=100, is_ended=True)
+        return json.dumps({"message": 'Ei liikuttu koska ollaan viimisessä checkpointissa.'})

@@ -7,7 +7,7 @@
   <script src="peli.js" defer></script>
 </head>
 <body>
-<button id="back_to_menu">Takaisin päävalikkoon</button>
+
 <div class="game-container">
   <div class="status-map-container">
     <div class="status-box">
@@ -42,10 +42,15 @@
         <img src="images/adventurer.png" alt="adventurer kuva">
     </div>
     <div class="map-box">
-      <h2>SUMUINEN METSÄ</h2>
-      <img src="images/sumuinen_metsä.png" alt="Map Image">
+      <h2 id="location_name"></h2>
+      <img id="location_image" src="" alt="Map Image">
     </div>
-    
+  </div>
+  <div class="player-controls">
+    <button id="move">Liiku</button>
+    <button id="shop">Avaa kauppa</button>
+    <button id="help">Pelin ohjeet</button>
+    <button id="back_to_menu">Päävalikkoon</button>
   </div>
 </div>
 </body>
