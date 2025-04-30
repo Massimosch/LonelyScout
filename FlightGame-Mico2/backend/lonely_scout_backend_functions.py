@@ -19,14 +19,11 @@ def get_game(player_name):
     query = f"""SELECT game.*, checkpoint.name as checkpoint_name FROM game LEFT JOIN checkpoint ON game.current_checkpoint = checkpoint.id
                 WHERE game.player_name = '{player_name}' AND game.is_ended is FALSE"""
     player_data = exequte_this_query(query)
-    consumable_data = get_consumables(player_name)
-    result = [player_data, consumable_data]
-    return result
+    return player_data
     
-def update_game(player_name, current_checkpoint, health, score, is_ended):
-    update_query = f"UPDATE game SET current_checkpoint = {current_checkpoint}, health = {health}, score = {score}, is_ended = {is_ended} WHERE player_name = '{player_name}' AND is_ended IS FALSE"
-    result = exequte_this_query(update_query)
-    return result
+def update_game(id, current_checkpoint, health, score, is_ended):
+    update_query = f"UPDATE game SET current_checkpoint = {current_checkpoint}, health = {health}, score = {score}, is_ended = {is_ended} WHERE id = {id}"
+    exequte_this_query(update_query)
 
 def start_new_game(player_name, current_checkpoint, health, score):
     insert_query = f"INSERT INTO game (player_name, current_checkpoint, health, score) VALUES('{player_name}', {current_checkpoint}, {health}, {score})"
