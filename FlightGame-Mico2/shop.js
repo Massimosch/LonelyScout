@@ -1,4 +1,5 @@
 ﻿'use strict'
+//Shop things
     let shopInventory = {
       weapons: [
         {
@@ -23,6 +24,11 @@
           durability: "100"
         }], consumables: []
     };
+    const shopModal=document.getElementById("shopModal");
+    const shopButt=document.getElementById("shopButton");
+    const shopBox = document.getElementById("shopInventory");
+
+//Player things
     let playerInventory ={
       weapons: [
         {
@@ -54,30 +60,34 @@
           quantity: 5
         }, {name: "nakki", sale_value: 10, heal_amount: "20", quantity: 5}]
     };
+    const playerBox = document.getElementById("playerInventory");
     let gold = 100;
     const goldText = document.getElementById("goldText");
-    let articleInfoArray = {
-      weapon: {h: "Aseet: "},
-      consumable: {h: "Käyttötavarat: "}
-    };
+
+//Trade things
     let tradeArray = {sell: [], buy: []};
-    const shopBox = document.getElementById("shopInventory");
-    const playerBox = document.getElementById("playerInventory");
     const tradeWindow = document.getElementById("tradeWindow");
     const tradeBuying = document.getElementById("buying");
     const tradeBuyingText = document.getElementById("buyingText");
     const tradeSellingText = document.getElementById("sellingText");
     const tradeSelling = document.getElementById("selling");
-    const shopModal=document.getElementById("shopModal");
+    const tradeButt=document.getElementById("tradeButton");
+    let shopCreated=false;
+//Modal opening and closing
   window.onclick = function(event) {
   if (event.target === shopModal) {
     shopModal.style.display="none";
   }}
-shopButt.onclick= function(){
-  createShop();
-  modal.style.display="flex";
-};
+  shopButt.onclick= function(){
+    if (!shopCreated){
+      createShop();
+    }
+    shopModal.style.display="flex";
+  };
+
+//Create shop elements
   function createShop() {
+    shopCreated=true;
     inventoryPrinter(shopInventory, shopBox, 'weapons', "aseet");
     inventoryPrinter(shopInventory, shopBox, 'consumables', "käyttötavarat");
     inventoryPrinter(playerInventory, playerBox, 'weapons', "aseet");
@@ -86,10 +96,11 @@ shopButt.onclick= function(){
     goldText.innerText = `Gold: ${gold}`
   }
 
-
+//Creates containers, text and buttons for items
   function inventoryPrinter(inventory, box, inventoryType, titleText) {
     let itemContainer = document.createElement('div');
     let containerTitle = document.createElement('h2');
+    containerTitle.classList.add("shoph");
     containerTitle.innerText = titleText;
     itemContainer.appendChild(containerTitle);
     for (let item of inventory[inventoryType]) {
@@ -104,11 +115,14 @@ shopButt.onclick= function(){
       let button = document.createElement('button');
       if (inventory===shopInventory)
       {
+        button.innerText = "Osta";
+      }
+      else {
         button.innerText = "Myy";
       }
 
       let itemdiv = document.createElement('div');
-      itemdiv.style.backgroundColor = "white";
+      itemdiv.classList.add("itemInfo")
       itemdiv.appendChild(button);
       itemdiv.appendChild(p);
       itemdiv.id=item.toString();
@@ -118,6 +132,7 @@ shopButt.onclick= function(){
     box.appendChild(itemContainer);
   }
 
+//gives item buttons event listeners for adding into and out of trade window
   function itemButtonAddListener(button, item, itemdiv, itemContainer, inventory) {
     button.addEventListener("click", function() {
       let addToTrade = false;
@@ -131,9 +146,8 @@ shopButt.onclick= function(){
 
         } else {
           tradeBuying.appendChild(itemdiv);
-
         }
-
+        tradeButt.style.display="block";
       }
       if (addToTrade) {
         if (inventory === shopInventory) {
@@ -168,12 +182,15 @@ shopButt.onclick= function(){
       } else {
         tradeBuyingText.innerHTML = "Ostettavat";
       }
+      if (tradeArray.sell.length===0 && tradeArray.buy.length===0){
+        tradeButt.style.display="none";
+      }
     });
   }
 
 
   function unloadShop() {
-    
+
   }
 
 

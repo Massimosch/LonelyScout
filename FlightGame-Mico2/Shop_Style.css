@@ -15,20 +15,33 @@
     display: flex;
                 flex-wrap: wrap;
       margin: 15% auto; /* 15% from the top and centered */
-    background-color: azure;
+    background-color: burlywood;
   padding: 20px;
   border: 1px solid #888;
   width: 50%;
 
 }
-
+.buysell h2 {
+    font-size: 1.5rem;
+}
+.bottom {
+    margin-top: 5rem;
+    display: none;
+}
+.shoph {
+    font-size: 2rem;
+}
+.itemInfo {
+    font-size: 1rem;
+    background-color: white;
+        border-radius: 0.2rem;
+}
 .item {
             flex: 1;
 
-            background-color: lightblue;
   margin: 10% auto; /* 15% from the top and centered */
   padding: 10px;
-  border: 1px solid #888;
+
   width: 100%;
     overflow: auto;
 }
