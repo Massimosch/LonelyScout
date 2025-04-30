@@ -5,6 +5,7 @@ const score = document.querySelector('#score');
 const checkpoint = document.querySelector('#checkpoint');
 const takaisinBtn = document.querySelector('#back_to_menu');
 const inventory = document.querySelector('#inventory');
+const liikuBtn = document.querySelector('#move');
 
 
 if (takaisinBtn) {
