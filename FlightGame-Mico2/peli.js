@@ -95,7 +95,6 @@ let isProcessing = false;
 async function consumables_click(event) {
   await current_consumables
   await current_stats
-  console.log(current_stats)
   const button=event.currentTarget
   if (isProcessing) return;
   isProcessing = true;
