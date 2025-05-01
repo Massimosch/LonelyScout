@@ -60,20 +60,18 @@ def get_consumables(game_id): #funktio, joka tekee consumables listan
     return consumables
 
 def move_to_checkpoint(player_name):
-    query = f"SELECT current_checkpoint FROM game WHERE player_name = '{player_name}'"
-    result = exequte_this_query(query)
-    last_checkpoint = get_last_checkpoint()
     player_data = get_game(player_name)
-
-    if result:
-        current_checkpoint = result[0]['current_checkpoint']
-    else:
-        return ({"message": 'Pelaaja tietoja ei löydy'})
-
+    if not player_data:
+        return {"message": 'Pelaaja tietoja ei löydy'}, 404
+    
+    game_id = player_data[0]['id']
+    current_checkpoint = player_data[0]['current_checkpoint']
+    last_checkpoint = get_last_checkpoint()
+    
     if current_checkpoint < last_checkpoint:
-        new_checkpoint = int(current_checkpoint) + 1
-        update_game(player_name, new_checkpoint, health=100, score=100, is_ended=False)
-        return ({"message": f'Liikuttiin {new_checkpoint}'}), 200
+        new_checkpoint = current_checkpoint + 1
+        update_game(player_data[0]['id'], new_checkpoint, player_data[0]['health'], player_data[0]['score'], False)
+        return {"message": "Taisteluun Battle.html!"}, 200
     else:
-        update_game(player_name, current_checkpoint, health=100, score=100, is_ended=True)
-        return ({"message": 'Ei liikuttu koska ollaan viimisessä checkpointissa.'})
+        update_game(game_id, current_checkpoint, 100, player_data[0]['score'], True)
+        return {"message": "Game end logix here.."}, 200
