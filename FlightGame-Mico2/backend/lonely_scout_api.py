@@ -21,9 +21,9 @@ def load_game(player_name):
 def save_game(game_id):
     last_checkpoint = lonely_scout_backend_functions.get_last_checkpoint()
     data = request.json
-    current_checkpoint_id = int(data["current_checkpoint_id"])
-    health = int(data["health"])
-    score = int(data["score"])
+    current_checkpoint_id = int(data["player_stats"]["current_checkpoint_id"])
+    health = int(data["player_stats"]["health"])
+    score = int(data["player_stats"]["score"])
     is_ended = True if current_checkpoint_id == last_checkpoint else False
     lonely_scout_backend_functions.update_game(game_id, current_checkpoint_id, health, score, is_ended)
     return '', 200

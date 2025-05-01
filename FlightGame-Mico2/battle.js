@@ -8,7 +8,7 @@ const enemy_damage = document.querySelector('#enemy_damage');
 const enemy_health = document.querySelector('#enemy_health');
 const enemy_name = document.querySelector('#enemy_name');
 const weapons = document.querySelector('#aseet');
-const hit = document.querySelector('#hit')
+const hit = document.querySelector('#hit');
 
 document.addEventListener('DOMContentLoaded', async () => {
   const window_parameter = new URLSearchParams(window.location.search);
@@ -25,12 +25,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 weapons.addEventListener('change', () => {
   battleState.playerState.selectedWeapon = battleState.weapons[weapons.value];
 });
-hit.addEventListener('click', runFightRound)
+
+hit.addEventListener('click', runFightRound);
+
 const battleState = {
   playerState:
       {
-        player: '',
-        game_id: 0,
+        player: 'test',
+        game_id: 155,
         health: 100,
         score: 100,
         current_checkpoint_id: 0,
@@ -94,7 +96,11 @@ async function updateGameState(username) {
     battleState.playerState.health = res_data.player_stats.health;
     battleState.playerState.score = res_data.player_stats.score;
     battleState.playerState.game_id = res_data.player_stats.id;
-    battleState.playerState.current_checkpoint_id = res_data.player_stats.current_checkpoint + 1;
+    battleState.playerState.current_checkpoint_id = res_data.player_stats.current_checkpoint +
+        1;
+    // to add weapons, to add food
+
+    console.log(res_data);
 
     const enemy_res = await fetch('http://localhost:8000/get_random_enemy');
     const enemy = (await enemy_res.json())[0];
@@ -123,33 +129,52 @@ function updateBattleView() {
   }
 }
 
-async function runFightRound(){
-  if (battleState.playerState.selectedWeapon.type === battleState.enemy.weakness){
-    battleState.enemy.health -= 2*battleState.playerState.selectedWeapon.damage;
+async function runFightRound() {
+  if (battleState.playerState.selectedWeapon.type ===
+      battleState.enemy.weakness) {
+    battleState.enemy.health -= 2 *
+        battleState.playerState.selectedWeapon.damage;
+
   } else {
     battleState.enemy.health -= battleState.playerState.selectedWeapon.damage;
   }
-  if (battleState.enemy.health > 0){
-    battleState.playerState.health -= battleState.enemy.damage
+  enemy_health.innerHTML = `TERVEYS: ${battleState.enemy.health}`;
+  battleState.playerState.selectedWeapon.durability -= 1;
+  if (battleState.enemy.health > 0) {
+    battleState.playerState.health -= battleState.enemy.damage;
+    health.innerHTML = `TERVEYS: ${battleState.playerState.health}`;
+    if (battleState.playerState.health < 1) {
+      // to call save game
+    }
   } else {
-    await move_checkpoint()
-    window.location.href=`peli.html?username=${battleState.playerState.player}`
+    // some pop up like module in the store when player win
+    await save_data();
+    window.location.href = `peli.html?username=${battleState.playerState.player}`;
   }
 }
 
-async function move_checkpoint(){
+async function save_data() {
   try {
     let data = {
-      current_checkpoint_id: battleState.playerState.current_checkpoint_id,
-      health: battleState.playerState.health,
-      score: battleState.playerState.score
-    }
+      player_stats: {
+        player: battleState.playerState.player,
+        current_checkpoint_id: battleState.playerState.current_checkpoint_id,
+        health: battleState.playerState.health,
+        score: battleState.playerState.score,
+      },
+      consumables: battleState.food,
+      weapons: battleState.weapons.slice(1),
+    };
 
-    const req = await fetch(`http://localhost:8000/save_game/${battleState.playerState.game_id}`,
-          {method: 'POST',
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(data)});
+    console.log(data);
 
+    const req = await fetch(
+        `http://localhost:8000/save_game/${battleState.playerState.game_id}`,
+        {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(data),
+        });
   } catch (e) {
     console.log(e);
   }
