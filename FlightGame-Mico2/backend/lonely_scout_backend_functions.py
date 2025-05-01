@@ -1,6 +1,4 @@
 import database
-import json
-
 
 def exequte_this_query(query):
     cursor = database.yhteys.cursor(dictionary=True)
@@ -70,12 +68,12 @@ def move_to_checkpoint(player_name):
     if result:
         current_checkpoint = result[0]['current_checkpoint']
     else:
-        return json.dumps({"message": 'Pelaaja tietoja ei löydy'}), 404
+        return ({"message": 'Pelaaja tietoja ei löydy'})
 
     if current_checkpoint < last_checkpoint:
         new_checkpoint = int(current_checkpoint) + 1
         update_game(player_name, new_checkpoint, health=100, score=100, is_ended=False)
-        return json.dumps({"message": f'Liikuttiin {new_checkpoint}'}), 200
+        return ({"message": f'Liikuttiin {new_checkpoint}'}), 200
     else:
         update_game(player_name, current_checkpoint, health=100, score=100, is_ended=True)
-        return json.dumps({"message": 'Ei liikuttu koska ollaan viimisessä checkpointissa.'})
+        return ({"message": 'Ei liikuttu koska ollaan viimisessä checkpointissa.'})
