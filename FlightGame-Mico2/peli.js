@@ -14,6 +14,7 @@ const consumables_buttons = document.querySelectorAll('.consumable-container');
 const locationName = document.querySelector('#location_name');
 const locationImage = document.querySelector('#location_image');
 const liikuBtn = document.querySelector('#move');
+let current_consumables, current_stats
 
 if (liikuBtn) {
   liikuBtn.addEventListener('click', async () => {
@@ -49,8 +50,9 @@ async function updateGameState(username) {
     const response = await fetch(
         `http://localhost:8000/load_game/${username}`, {method: 'GET'});
     const data = await response.json();
-    console.log(data);
-    const userData = data;
+
+    const player_stats = data["player_stats"]
+
     let user_consumables;
     if (!data.consumables || data.consumables.length === 0) {
       user_consumables = [
@@ -61,51 +63,66 @@ async function updateGameState(username) {
     } else {
       user_consumables = data.consumables;
     }
-    console.log(user_consumables);
 
-    health.innerHTML = `TERVEYS: ${userData.player_stats.health}`;
-    score.innerHTML = `SCORE: ${userData.player_stats.score}`;
-    checkpoint.innerHTML = `CHECKPOINT: ${userData.player_stats.checkpoint_name}`;
-    locationName.innerHTML = `${userData.player_stats.checkpoint_name}`;
-    locationImage.src = `images/${userData.player_stats.checkpoint_name}.png`;
+    current_consumables = user_consumables
+    current_stats = player_stats
+
+    health.innerHTML = `TERVEYS: ${player_stats.health}`;
+    score.innerHTML = `SCORE: ${player_stats.score}`;
+    checkpoint.innerHTML = `CHECKPOINT: ${player_stats.checkpoint_name}`;
+    locationName.innerHTML = `${player_stats.checkpoint_name}`;
+    locationImage.src = `images/${player_stats.checkpoint_name}.png`;
 
     for (let consumable of user_consumables) {
-      const item = consumable.querySelector(`#${consumable.name}`);
+      const item = consumables.querySelector(`#${consumable.name}`);
       const item_quantity = item.querySelector('.quantity');
       item_quantity.innerHTML = `${consumable.quantity}`;
     }
-    let isProcessing = false;
-    consumables_buttons.forEach(consumable_button => {
-      consumable_button.addEventListener('click', () => {
-        if (isProcessing) return;
-        isProcessing = true;
-        for (let item of user_consumables) {
-          if (item.name === consumable_button.id) {
-            if (item.quantity > 0) {
-              item.quantity -= 1;
-              const quantityElement = consumable_button.querySelector(
-                  '.quantity');
-              quantityElement.textContent = item.quantity;
-              console.log(userData.health);
-              userData.health += item.heal_amount;
-              health.innerHTML = `TERVEYS: ${userData.health}`;
-            } else {
-              alert('You dont have this item');
-            }
-          }
-          isProcessing = false;
-        }
-      });
-    });
-  } catch (e) {
+  }
+
+  catch (e) {
     console.log(e);
   }
 }
+
+
+consumables_buttons.forEach(consumable_button => {
+      consumable_button.addEventListener('click', consumables_click)
+})
+
+let isProcessing = false;
+async function consumables_click(event) {
+  await current_consumables
+  await current_stats
+  console.log(current_stats)
+  const button=event.currentTarget
+  if (isProcessing) return;
+  isProcessing = true;
+  for (let item of current_consumables) {
+    if (item.name === button.id) {
+      if (item.quantity > 0) {
+        item.quantity -= 1;
+        const quantityElement = button.querySelector(
+            '.quantity');
+        quantityElement.textContent = item.quantity;
+        current_stats.health += item.heal_amount;
+        health.innerHTML = `TERVEYS: ${current_stats.health}`;
+      } else {
+        alert('You dont have this item');
+      }
+    }
+    isProcessing = false;
+  }
+}
+
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
 
   if (username) {
     updateGameState(username);
+
   } else {
     alert('Username parametri puuttuu');
   }
