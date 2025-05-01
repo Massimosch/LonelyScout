@@ -65,15 +65,23 @@ let gold = 100;
 const goldText = document.getElementById('goldText');
 
 //Trade things
-let tradeArray = {sell: {weapons:[],consumables:[]}, buy: {weapons:[],consumables:[]}};
+let tradeArray = {
+  sell: {weapons: [], consumables: []},
+  buy: {weapons: [], consumables: []},
+};
 const tradeWindow = document.getElementById('tradeWindow');
 let tradeBuying = document.getElementById('buying');
 const tradeSelling = document.getElementById('selling');
 const tradeButt = document.getElementById('tradeButton');
 let shopCreated = false;
+let trading = false;
+
 //Modal opening and closing
 window.onclick = function(event) {
   if (event.target === shopModal) {
+    if (trading) {
+      return;
+    }
     shopModal.style.display = 'none';
   }
 };
@@ -100,74 +108,96 @@ function inventoryPrinter(inventory, box) {
   let consumableContainerHeader = document.createElement('h2');
   weaponContainerHeader.classList.add('shoph');
   consumableContainerHeader.classList.add('shoph');
-  weaponContainerHeader.innerText = "Aseet";
+  weaponContainerHeader.innerText = 'Aseet';
   weaponContainer.appendChild(weaponContainerHeader);
-  createInventoryInfo(inventory,'weapons',weaponContainer);
-  consumableContainerHeader.innerText="Käyttötavarat";
+  createInventoryInfo(inventory, 'weapons', weaponContainer);
+  consumableContainerHeader.innerText = 'Käyttötavarat';
   consumableContainer.appendChild(consumableContainerHeader);
-  createInventoryInfo(inventory,'consumables',consumableContainer);
+  createInventoryInfo(inventory, 'consumables', consumableContainer);
   box.appendChild(weaponContainer);
   box.appendChild(consumableContainer);
 }
-function createInventoryInfo(inventory,inventoryType,itemContainer) {
-   for (let item of inventory[inventoryType]) {
+function createInventoryInfo(inventory, inventoryType, itemContainer) {
+  for (let item of inventory[inventoryType]) {
     let itemInfoParagraph = document.createElement('p');
     if (inventoryType === 'weapons') {
-      itemInfoParagraph.innerText = item.name + ', Tyyppi: ' + item.type + ', Kestävyys: ' +
-          item.durability + ', Vahinko:' + item.damage + ', Hinta: ' +
-          item.sale_value;
-    }
-    else {
-      itemInfoParagraph.innerText = item.name;
+      itemInfoParagraph.innerHTML = `<b><b>${item.name}</b></b><br><b>Tyyppi: </b>${item.type}<b> Vahinko: </b> ${item.damage}<br><b> Kestävyys: </b> ${item.durability}<b> Hinta: </b> ${item.sale_value}`;
+    } else {
+      itemInfoParagraph.innerHTML = `<b><b>${item.name}</b><br><b> Parannusvoima: </b> ${item.heal_amount}<b> Hinta: </b> ${item.sale_value}`;
     }
     let itemButton = document.createElement('button');
-    itemButton.innerText="Siirrä koriin";
+    itemButton.classList.add('button-group');
+    itemButton.innerText = 'Siirrä koriin';
     let itemDiv = document.createElement('div');
     itemDiv.classList.add('itemInfo');
     itemDiv.appendChild(itemButton);
     itemDiv.appendChild(itemInfoParagraph);
     itemContainer.appendChild(itemDiv);
     if (inventory === shopInventory) {
-      addToTrade(itemButton, item, itemDiv, itemContainer, tradeArray.buy[inventoryType],
-          tradeBuying,item.sale_value);
+      addToTrade(itemButton, item, itemDiv, itemContainer, tradeArray.buy,
+          inventoryType,
+          tradeBuying, item.sale_value);
     } else if (inventory === playerInventory) {
-      addToTrade(itemButton, item, itemDiv, itemContainer, tradeArray.sell[inventoryType],
-          tradeSelling,-item.sale_value);
+      addToTrade(itemButton, item, itemDiv, itemContainer, tradeArray.sell,
+          inventoryType,
+          tradeSelling, -item.sale_value);
     }
   }
 }
 
-function addToTrade(button, item, itemdiv, itemContainer, tradesArray, tradeContainer,sale_value) {
-    button.onclick=function() {
-    button.innerText="Poista";
+function addToTrade(
+    button, item, itemdiv, itemContainer, tradesArray, inventoryType,
+    tradeContainer, sale_value) {
+  button.onclick = function() {
+    if (tradesArray === tradeArray.buy) {
+      let infoP = itemdiv.lastChild.cloneNode(true);
+      itemdiv = itemdiv.cloneNode();
+      button = button.cloneNode(true);
+      itemdiv.appendChild(button);
+      itemdiv.appendChild(infoP);
+    }
+    button.innerText = 'Poista';
     console.log(tradeWindow);
     console.log(tradeContainer);
     tradeContainer.appendChild(itemdiv);
     gold -= sale_value;
-    tradesArray.push(item);
+    tradesArray[inventoryType].push(item);
     goldText.innerText = `Gold: ${gold}`;
     tradeContainer.style.display = 'Block';
-    removeFromTrade(button, item,itemdiv,itemContainer,tradesArray,tradeContainer,sale_value);
+    removeFromTrade(button, item, itemdiv, itemContainer, tradesArray,
+        inventoryType, tradeContainer, sale_value);
   };
 }
 
-function removeFromTrade(button, item, itemdiv, itemContainer, tradesArray, tradeContainer,sale_value){
-  button.onclick= function() {
-    button.innerText="Siirrä koriin";
-    itemContainer.appendChild(itemdiv);
-    let ind = tradesArray.indexOf(item);
+function removeFromTrade(
+    button, item, itemdiv, itemContainer, tradesArray, inventoryType,
+    tradeContainer, sale_value) {
+  button.onclick = function() {
+    button.innerText = 'Siirrä koriin';
+    let ind = tradesArray[inventoryType].indexOf(item);
     gold += sale_value;
-    tradesArray.splice(ind, 1);
+    tradesArray[inventoryType].splice(ind, 1);
     goldText.innerText = `Gold: ${gold}`;
-    if (tradesArray.length === 0) {
+    if (tradesArray === tradeArray.buy) {
+      tradeContainer.removeChild(itemdiv);
+      itemdiv.remove();
+    } else {
+      itemContainer.appendChild(itemdiv);
+      addToTrade(button, item, itemdiv, itemContainer, tradesArray,
+          inventoryType,
+          tradeContainer, sale_value);
+    }
+    if (tradesArray['weapons'].length === 0 &&
+        tradesArray['consumables'].length === 0) {
       tradeContainer.style.display = 'none';
     }
-    addToTrade(button, item, itemdiv, itemContainer, tradesArray,
-        tradeContainer,sale_value)
   };
 }
-function completeTrade(type){
-  for (let item of tradeArray.buy[type]){
 
+async function completeTrade(tradeType, itemType, inventory) {
+  if (tradeArray[tradeType][itemType].length !== 0) {
+    for (let item of tradeArray[tradeType][itemType]) {
+      //add/remove item to/from db inventory
+    }
   }
 }
