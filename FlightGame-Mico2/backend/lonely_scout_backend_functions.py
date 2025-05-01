@@ -59,6 +59,7 @@ def get_consumables(game_id): #funktio, joka tekee consumables listan
     consumables=exequte_this_query(q)
     return consumables
 
+"""
 def move_to_checkpoint(player_name):
     player_data = get_game(player_name)
     if not player_data:
@@ -75,3 +76,4 @@ def move_to_checkpoint(player_name):
     else:
         update_game(game_id, current_checkpoint, 100, player_data[0]['score'], True)
         return {"message": "Game end logix here.."}, 200
+"""
