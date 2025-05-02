@@ -9,6 +9,11 @@ const enemy_health = document.querySelector('#enemy_health');
 const enemy_name = document.querySelector('#enemy_name');
 const weapons = document.querySelector('#aseet');
 const hit = document.querySelector('#hit');
+const battleModal = document.getElementById('battleResultModal');
+const battleModalHeader = document.getElementById('battleHeader');
+const battleModalDesc = document.getElementById('description')
+const btnModal = document.getElementById('continue');
+
 
 document.addEventListener('DOMContentLoaded', async () => {
   const window_parameter = new URLSearchParams(window.location.search);
@@ -138,21 +143,38 @@ async function runFightRound() {
   } else {
     battleState.enemy.health -= battleState.playerState.selectedWeapon.damage;
   }
+  //hit
   enemy_health.innerHTML = `TERVEYS: ${battleState.enemy.health}`;
   battleState.playerState.selectedWeapon.durability -= 1;
+
   if (battleState.enemy.health > 0) {
+    //enemy hit
     battleState.playerState.health -= battleState.enemy.damage;
     health.innerHTML = `TERVEYS: ${battleState.playerState.health}`;
     if (battleState.playerState.health < 1) {
-      // to call save game
+      // modal 'sinä kuolit' to call save game
+      battleModal.style.display = 'block';
+      battleModalHeader.innerHTML = 'Sinä kuolit.';
+      battleModalDesc.innerHTML = 'Voit aloittaa uuden pelin.';
+      btnModal.onclick = async function() {
+        await save_data();
+        window.location.href = `menu.html`;
+        battleModal.style.display = 'none';
+      }
+    } else {
+      // enemy dead -> some pop up like modal in the store 'you can do futher'
+      battleModal.style.display = 'block';
+      battleModalHeader.innerHTML = 'Vihollinen on voitettu!';
+      battleModalDesc.innerHTML = 'Voit siirtyä eteenpäin.';
+      btnModal.onclick = async function() {
+        await save_data();
+        window.location.href = `peli.html?username=${battleState.playerState.player}`;
+        battleModal.style.display = 'none';
+      };
+
     }
-  } else {
-    // some pop up like module in the store when player win
-    await save_data();
-    window.location.href = `peli.html?username=${battleState.playerState.player}`;
   }
 }
-
 async function save_data() {
   try {
     let data = {
