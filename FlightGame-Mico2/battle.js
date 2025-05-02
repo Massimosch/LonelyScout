@@ -8,13 +8,14 @@ const enemy_damage = document.querySelector('#enemy_damage');
 const enemy_health = document.querySelector('#enemy_health');
 const enemy_name = document.querySelector('#enemy_name');
 const weapons = document.querySelector('#aseet');
+const hit = document.querySelector('#hit')
 
 document.addEventListener('DOMContentLoaded', async () => {
   const window_parameter = new URLSearchParams(window.location.search);
   const username = window_parameter.get('username');
 
-  if (true) {
-    //await updateGameState(username);
+  if (username) {
+    await updateGameState(username);
     updateBattleView();
   } else {
     alert('Username parametri puuttuu');
@@ -24,13 +25,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 weapons.addEventListener('change', () => {
   battleState.playerState.selectedWeapon = battleState.weapons[weapons.value];
 });
+hit.addEventListener('click', runFightRound)
 const battleState = {
   playerState:
       {
+        player: '',
+        game_id: 0,
         health: 100,
         score: 100,
+        current_checkpoint_id: 0,
         selectedWeapon: {
           name: 'nyrkki',
+          type: null,
           damage: 10,
           durability: Infinity,
         },
@@ -84,8 +90,11 @@ async function updateGameState(username) {
     const response = await fetch(`http://localhost:8000/load_game/${username}`,
         {method: 'GET'});
     const res_data = await response.json();
-    battleState.playerState.health = res_data[0].health;
-    battleState.playerState.score = res_data[0].score;
+    battleState.playerState.player = username;
+    battleState.playerState.health = res_data.player_stats.health;
+    battleState.playerState.score = res_data.player_stats.score;
+    battleState.playerState.game_id = res_data.player_stats.id;
+    battleState.playerState.current_checkpoint_id = res_data.player_stats.current_checkpoint + 1;
 
     const enemy_res = await fetch('http://localhost:8000/get_random_enemy');
     const enemy = (await enemy_res.json())[0];
@@ -111,5 +120,37 @@ function updateBattleView() {
     option.value = i;
     option.textContent = `${battleState.weapons[i].name} (kestävyys: ${battleState.weapons[i].durability}, damage: ${battleState.weapons[i].damage})`;
     weapons.appendChild(option);
+  }
+}
+
+async function runFightRound(){
+  if (battleState.playerState.selectedWeapon.type === battleState.enemy.weakness){
+    battleState.enemy.health -= 2*battleState.playerState.selectedWeapon.damage;
+  } else {
+    battleState.enemy.health -= battleState.playerState.selectedWeapon.damage;
+  }
+  if (battleState.enemy.health > 0){
+    battleState.playerState.health -= battleState.enemy.damage
+  } else {
+    await move_checkpoint()
+    window.location.href=`peli.html?username=${battleState.playerState.player}`
+  }
+}
+
+async function move_checkpoint(){
+  try {
+    let data = {
+      current_checkpoint_id: battleState.playerState.current_checkpoint_id,
+      health: battleState.playerState.health,
+      score: battleState.playerState.score
+    }
+
+    const req = await fetch(`http://localhost:8000/save_game/${battleState.playerState.game_id}`,
+          {method: 'POST',
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(data)});
+
+  } catch (e) {
+    console.log(e);
   }
 }

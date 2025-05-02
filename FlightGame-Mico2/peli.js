@@ -14,26 +14,94 @@ const consumables_buttons = document.querySelectorAll('.consumable-container');
 const locationName = document.querySelector('#location_name');
 const locationImage = document.querySelector('#location_image');
 const liikuBtn = document.querySelector('#move');
+let current_consumables, current_stats
+
+const gameState = {
+  playerState:
+      {
+        player: '',
+        game_id: 0,
+        health: 100,
+        score: 100,
+        current_checkpoint_id: 0,
+      },
+  food: [],
+  weapons: [
+    {
+      name: 'nyrkki',
+      damage: 10,
+      durability: Infinity,
+    },
+    {
+      name: 'steel sword',
+      type: 'sword',
+      saleValue: 250,
+      damage: 100,
+      durability: 10,
+    },
+    {
+      name: 'slingshot',
+      type: 'ranged',
+      saleValue: 100,
+      damage: 50,
+      durability: 10,
+    },
+    {
+      name: 'bow',
+      type: 'ranged',
+      saleValue: 150,
+      damage: 50,
+      durability: 10,
+    },
+    {
+      name: 'magic staff',
+      type: 'magic',
+      saleValue: 175,
+      damage: 60,
+      durability: 10,
+    },
+  ],
+  enemy: {
+    name: 'orc',
+    damage: 3,
+    weakness: 'sword',
+    health: 50,
+  },
+};
+
+document.addEventListener('DOMContentLoaded', async() => {
+
+  if (username) {
+    await updateGameState(username);
+  } else {
+    alert('Username parametri puuttuu');
+  }
+});
+
 
 if (liikuBtn) {
   liikuBtn.addEventListener('click', async () => {
-    if (!username)
+    if (!gameState.playerState.player)
       return;
 
     try {
-      const response = await fetch(`http://localhost:8000/move/${username}`,
-          {method: 'GET'});
-      const data = await response.json();
-      if (data) {
-        await updateGameState(username);
-      } else {
-        alert('Ei voida liikkua eteenpäin');
+      let data = {
+        current_checkpoint_id: gameState.playerState.current_checkpoint_id,
+        health: gameState.playerState.health,
+        score: gameState.playerState.score
       }
+      
+      const request = await fetch(`http://localhost:8000/save_game/${gameState.playerState.game_id}`,
+          {method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(data)});
+
     } catch (e) {
       console.log(e);
     }
   });
 }
+
 if (takaisinBtn) {
   takaisinBtn.addEventListener('click', () => {
     window.location.href = 'menu.html';
@@ -47,10 +115,22 @@ async function updateGameState(username) {
 
   try {
     const response = await fetch(
-        `http://localhost:8000/load_game/${username}`, {method: 'GET'});
-    const data = await response.json();
-    console.log(data);
-    const userData = data;
+        `http://localhost:8000/load_game/${username}`, 
+        {method: 'GET'});
+    const res_data = await response.json();
+    gameState.playerState.player = username;
+    gameState.playerState.health = res_data.player_stats.health;
+    gameState.playerState.score = res_data.player_stats.score;
+    gameState.playerState.game_id = res_data.player_stats.id;
+    gameState.playerState.current_checkpoint_id = res_data.player_stats.current_checkpoint_id;
+
+    health.innerHTML = `TERVEYS: ${res_data.player_stats.health}`;
+    score.innerHTML = `SCORE: ${res_data.player_stats.score}`;
+    checkpoint.innerHTML = `CHECKPOINT: ${res_data.current_checkpoint_id.name}`;
+    locationName.innerHTML = `${res_data.current_checkpoint_id.name}`;
+    locationImage.src = `images/${res_data.current_checkpoint_id.name}.png`;
+    
+
     let user_consumables;
     if (!data.consumables || data.consumables.length === 0) {
       user_consumables = [
@@ -62,51 +142,44 @@ async function updateGameState(username) {
       user_consumables = data.consumables;
     }
     console.log(user_consumables);
-
-    health.innerHTML = `TERVEYS: ${userData.player_stats.health}`;
-    score.innerHTML = `SCORE: ${userData.player_stats.score}`;
-    checkpoint.innerHTML = `CHECKPOINT: ${userData.player_stats.checkpoint_name}`;
-    locationName.innerHTML = `${userData.player_stats.checkpoint_name}`;
-    locationImage.src = `images/${userData.player_stats.checkpoint_name}.png`;
-
-    for (let consumable of user_consumables) {
-      const item = consumable.querySelector(`#${consumable.name}`);
+    current_consumables = user_consumables
+    
+for (let consumable of user_consumables) {
+      const item = consumables.querySelector(`#${consumable.name}`);
       const item_quantity = item.querySelector('.quantity');
       item_quantity.innerHTML = `${consumable.quantity}`;
     }
-    let isProcessing = false;
-    consumables_buttons.forEach(consumable_button => {
-      consumable_button.addEventListener('click', () => {
-        if (isProcessing) return;
-        isProcessing = true;
-        for (let item of user_consumables) {
-          if (item.name === consumable_button.id) {
-            if (item.quantity > 0) {
-              item.quantity -= 1;
-              const quantityElement = consumable_button.querySelector(
-                  '.quantity');
-              quantityElement.textContent = item.quantity;
-              console.log(userData.health);
-              userData.health += item.heal_amount;
-              health.innerHTML = `TERVEYS: ${userData.health}`;
-            } else {
-              alert('You dont have this item');
-            }
-          }
-          isProcessing = false;
-        }
-      });
-    });
-  } catch (e) {
+  }
+  catch (e) {
     console.log(e);
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+consumables_buttons.forEach(consumable_button => {
+      consumable_button.addEventListener('click', consumables_click)
+})
 
-  if (username) {
-    updateGameState(username);
-  } else {
-    alert('Username parametri puuttuu');
+let isProcessing = false;
+async function consumables_click(event) {
+  await current_consumables
+  await current_stats
+  console.log(current_stats)
+  const button=event.currentTarget
+  if (isProcessing) return;
+  isProcessing = true;
+  for (let item of current_consumables) {
+    if (item.name === button.id) {
+      if (item.quantity > 0) {
+        item.quantity -= 1;
+        const quantityElement = button.querySelector(
+            '.quantity');
+        quantityElement.textContent = item.quantity;
+        current_stats.health += item.heal_amount;
+        health.innerHTML = `TERVEYS: ${current_stats.health}`;
+      } else {
+        alert('You dont have this item');
+      }
+    }
+    isProcessing = false;
   }
-});
+}

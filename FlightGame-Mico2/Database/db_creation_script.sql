@@ -64,7 +64,6 @@ CREATE TABLE consumable_Inventory (
     FOREIGN KEY (item_id) REFERENCES consumables(id)
 );
 
-
 INSERT INTO enemy (name, damage, weakness, health) VALUES
 ('goblin', 3, "sword", 30),
 ('rogue', 5, "magic", 40),
