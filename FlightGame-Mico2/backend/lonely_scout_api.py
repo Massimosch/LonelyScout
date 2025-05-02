@@ -21,6 +21,7 @@ def load_game(player_name):
 def save_game(game_id):
     last_checkpoint = lonely_scout_backend_functions.get_last_checkpoint()
     data = request.json
+# we don't need player name because we dont' change it
     current_checkpoint_id = int(data["player_stats"]["current_checkpoint_id"])
     health = int(data["player_stats"]["health"])
     score = int(data["player_stats"]["score"])

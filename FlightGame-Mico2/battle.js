@@ -11,9 +11,8 @@ const weapons = document.querySelector('#aseet');
 const hit = document.querySelector('#hit');
 const battleModal = document.getElementById('battleResultModal');
 const battleModalHeader = document.getElementById('battleHeader');
-const battleModalDesc = document.getElementById('description')
+const battleModalDesc = document.getElementById('description');
 const btnModal = document.getElementById('continue');
-
 
 document.addEventListener('DOMContentLoaded', async () => {
   const window_parameter = new URLSearchParams(window.location.search);
@@ -38,7 +37,7 @@ const battleState = {
       {
         player: 'test',
         game_id: 155,
-        health: 100,
+        health: 3,
         score: 100,
         current_checkpoint_id: 0,
         selectedWeapon: {
@@ -148,33 +147,43 @@ async function runFightRound() {
   battleState.playerState.selectedWeapon.durability -= 1;
 
   if (battleState.enemy.health > 0) {
+
+    battleModal.style.display = 'block';
+    battleModalHeader.innerHTML = 'Vihollinen pysyi hengissä';
+    battleModalDesc.innerHTML = 'Hänellä on vielä voimaa ja hän hyökkää.';
+    btnModal.innerHTML = 'OK';
+    btnModal.onclick = async function() {
+
+      battleState.playerState.health -= battleState.enemy.damage;
+      health.innerHTML = `TERVEYS: ${battleState.playerState.health}`;
+      battleModal.style.display = 'none';
+    };
     //enemy hit
-    battleState.playerState.health -= battleState.enemy.damage;
-    health.innerHTML = `TERVEYS: ${battleState.playerState.health}`;
     if (battleState.playerState.health < 1) {
       // modal 'sinä kuolit' to call save game
       battleModal.style.display = 'block';
       battleModalHeader.innerHTML = 'Sinä kuolit.';
       battleModalDesc.innerHTML = 'Voit aloittaa uuden pelin.';
+      btnModal.innerHTML = 'OK';
       btnModal.onclick = async function() {
-        await save_data();
         window.location.href = `menu.html`;
         battleModal.style.display = 'none';
-      }
-    } else {
-      // enemy dead -> some pop up like modal in the store 'you can do futher'
-      battleModal.style.display = 'block';
-      battleModalHeader.innerHTML = 'Vihollinen on voitettu!';
-      battleModalDesc.innerHTML = 'Voit siirtyä eteenpäin.';
-      btnModal.onclick = async function() {
-        await save_data();
-        window.location.href = `peli.html?username=${battleState.playerState.player}`;
-        battleModal.style.display = 'none';
       };
-
     }
+  } else {
+    // enemy dead -> some pop up like modal in the store 'you can do futher'
+    battleState.playerState.score += 125;
+    battleModal.style.display = 'block';
+    battleModalHeader.innerHTML = 'Vihollinen on voitettu!';
+    battleModalDesc.innerHTML = 'Voit siirtyä eteenpäin.';
+    btnModal.onclick = async function() {
+      await save_data();
+      window.location.href = `peli.html?username=${battleState.playerState.player}`;
+      battleModal.style.display = 'none';
+    };
   }
 }
+
 async function save_data() {
   try {
     let data = {
