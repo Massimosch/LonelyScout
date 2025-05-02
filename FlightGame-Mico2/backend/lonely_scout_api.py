@@ -50,11 +50,6 @@ def get_random_enemy():
     result = lonely_scout_backend_functions.get_random_enemy()
     return result
 
-@app.route('/move/<player_name>')
-def move_to_checkpoint(player_name):
-    result = lonely_scout_backend_functions.move_to_checkpoint(player_name)
-    return result
-
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
