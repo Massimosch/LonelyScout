@@ -16,25 +16,77 @@ const locationImage = document.querySelector('#location_image');
 const liikuBtn = document.querySelector('#move');
 let current_consumables, current_stats
 
+const battleState = {
+  playerState:
+      {
+        player: '',
+        game_id: 0,
+        health: 100,
+        score: 100,
+        current_checkpoint_id: 0,
+      },
+  food: [],
+  weapons: [
+    {
+      name: 'nyrkki',
+      damage: 10,
+      durability: Infinity,
+    },
+    {
+      name: 'steel sword',
+      type: 'sword',
+      saleValue: 250,
+      damage: 100,
+      durability: 10,
+    },
+    {
+      name: 'slingshot',
+      type: 'ranged',
+      saleValue: 100,
+      damage: 50,
+      durability: 10,
+    },
+    {
+      name: 'bow',
+      type: 'ranged',
+      saleValue: 150,
+      damage: 50,
+      durability: 10,
+    },
+    {
+      name: 'magic staff',
+      type: 'magic',
+      saleValue: 175,
+      damage: 60,
+      durability: 10,
+    },
+  ],
+  enemy: {
+    name: 'orc',
+    damage: 3,
+    weakness: 'sword',
+    health: 50,
+  },
+};
+
 if (liikuBtn) {
   liikuBtn.addEventListener('click', async () => {
     if (!username)
       return;
 
     try {
-      const response = await fetch(`http://localhost:8000/move/${username}`,
-          {method: 'GET'});
-      const data = await response.json();
-      if (data) {
-        await updateGameState(username);
-      } else {
-        alert('Ei voida liikkua eteenpäin');
-      }
+      let data = {}
+
+      const response = await fetch(`http://localhost:8000/save_game/${username}`,
+          {method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(data)});
     } catch (e) {
       console.log(e);
     }
   });
 }
+
 if (takaisinBtn) {
   takaisinBtn.addEventListener('click', () => {
     window.location.href = 'menu.html';
