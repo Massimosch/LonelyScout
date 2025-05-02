@@ -2,7 +2,7 @@
 
 const health = document.querySelector('#health');
 const score = document.querySelector('#score');
-//const checkpoint = document.querySelector('#checkpoint');
+const checkpoint = document.querySelector('#checkpoint');
 const enemy_weakness = document.querySelector('#enemy_weakness');
 const enemy_damage = document.querySelector('#enemy_damage');
 const enemy_health = document.querySelector('#enemy_health');
@@ -39,6 +39,7 @@ const battleState = {
         game_id: 155,
         health: 3,
         score: 100,
+        checkpoint_name:'',
         current_checkpoint_id: 0,
         selectedWeapon: {
           name: 'nyrkki',
@@ -102,6 +103,7 @@ async function updateGameState(username) {
     battleState.playerState.game_id = res_data.player_stats.id;
     battleState.playerState.current_checkpoint_id = res_data.player_stats.current_checkpoint +
         1;
+    battleState.playerState.checkpoint_name = res_data.player_stats.checkpoint_name
     // to add weapons, to add food
 
     console.log(res_data);
@@ -124,6 +126,7 @@ function updateBattleView() {
   enemy_weakness.innerHTML = `HAAVOITTUVUUS: ${battleState.enemy.weakness}`;
   enemy_damage.innerHTML = `ISKUVARIO: ${battleState.enemy.damage}`;
   enemy_health.innerHTML = `TERVEYS: ${battleState.enemy.health}`;
+  checkpoint.innerHTML = `PAIKKA: ${battleState.playerState.checkpoint_name}`
 
   for (let i = 0; i < battleState.weapons.length; i++) {
     const option = document.createElement('option');
