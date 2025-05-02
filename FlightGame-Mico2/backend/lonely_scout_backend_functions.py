@@ -54,10 +54,9 @@ def get_checkpoints():
     return checkpoints
 
 def get_consumables(game_id): #funktio, joka tekee consumables listan
-    q=f"""Select name, heal_amount, count(*) as 'quantity' 
+    q=f"""Select name, heal_amount, quantity 
           from  consumable_Inventory inner join consumables on consumable_Inventory.item_id=consumables.id
-          WHERE consumable_Inventory.game_id={game_id} 
-          GROUP BY consumables.name"""
+          WHERE consumable_Inventory.game_id={game_id}"""
     consumables=exequte_this_query(q)
     return consumables
 
@@ -79,3 +78,4 @@ def move_to_checkpoint(player_name):
     else:
         update_game(player_name, current_checkpoint, health=100, score=100, is_ended=True)
         return json.dumps({"message": 'Ei liikuttu koska ollaan viimisessä checkpointissa.'})
+

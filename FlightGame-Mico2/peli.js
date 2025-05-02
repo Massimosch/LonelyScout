@@ -16,6 +16,12 @@ const locationImage = document.querySelector('#location_image');
 const liikuBtn = document.querySelector('#move');
 let current_consumables, current_stats
 
+function change_symbol_in_name(dictionary,symbol1,symbol2) {
+   for (let item of dictionary){
+      item.name=item.name.replace(symbol1,symbol2)
+    }
+}
+
 if (liikuBtn) {
   liikuBtn.addEventListener('click', async () => {
     if (!username)
@@ -57,12 +63,14 @@ async function updateGameState(username) {
     if (!data.consumables || data.consumables.length === 0) {
       user_consumables = [
         {'name': 'nakki', 'heal_amount': 5, 'quantity': 0},
-        {'name': 'parantava-juoma', 'heal_amount': 25, 'quantity': 0},
+        {'name': 'parantava juoma', 'heal_amount': 25, 'quantity': 0},
         {'name': 'piirakka', 'heal_amount': 15, 'quantity': 0},
       ];
     } else {
       user_consumables = data.consumables;
     }
+
+    change_symbol_in_name(user_consumables,' ','-')
 
     current_consumables = user_consumables
     current_stats = player_stats
