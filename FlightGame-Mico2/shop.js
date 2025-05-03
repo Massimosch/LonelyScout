@@ -75,7 +75,6 @@ const tradeSelling = document.getElementById('selling');
 const tradeButt = document.getElementById('tradeButton');
 let shopCreated = false;
 let trading = false;
-
 //Modal opening and closing
 window.onclick = function(event) {
   if (event.target === shopModal) {
@@ -120,41 +119,121 @@ function inventoryPrinter(inventory, box) {
 function createInventoryInfo(inventory, inventoryType, itemContainer) {
   for (let item of inventory[inventoryType]) {
     let itemInfoParagraph = document.createElement('p');
+    let itemDiv = document.createElement('div');
+    let itemButton = document.createElement('button');
+    itemButton.classList.add('button-group');
+    itemDiv.classList.add('itemInfo');
+    itemButton.innerText = 'Siirrä koriin';
+    itemDiv.appendChild(itemButton);
     if (inventoryType === 'weapons') {
       itemInfoParagraph.innerHTML = `<b><b>${item.name}</b></b><br><b>Tyyppi: </b>${item.type}<b> Vahinko: </b> ${item.damage}<br><b> Kestävyys: </b> ${item.durability}<b> Hinta: </b> ${item.sale_value}`;
     } else {
       itemInfoParagraph.innerHTML = `<b><b>${item.name}</b><br><b> Parannusvoima: </b> ${item.heal_amount}<b> Hinta: </b> ${item.sale_value}`;
+      let quantityP=document.createElement('p');
+      quantityP.innerHTML=`${item.quantity}`;
+      if (inventory===shopInventory){
+        quantityP.style.display="none";
+      }
+      itemDiv.appendChild(quantityP);
     }
-    let itemButton = document.createElement('button');
-    itemButton.classList.add('button-group');
-    itemButton.innerText = 'Siirrä koriin';
-    let itemDiv = document.createElement('div');
-    itemDiv.classList.add('itemInfo');
-    itemDiv.appendChild(itemButton);
     itemDiv.appendChild(itemInfoParagraph);
     itemContainer.appendChild(itemDiv);
     if (inventory === shopInventory) {
-      addToTrade(itemButton, item, itemDiv, itemContainer, tradeArray.buy,
+      if(inventoryType==='weapons'){
+        addToTrade(itemButton, item, itemDiv, itemContainer, tradeArray.buy,
           inventoryType,
           tradeBuying, item.sale_value);
+      }
+      else{
+        let itemClone=structuredClone(item);
+        let elementClone=itemDiv.cloneNode(true);
+        itemButton.onclick = function() {
+          addToTradeConsumable(itemButton,item,itemDiv,itemContainer,tradeArray.sell,inventoryType,tradeSelling,-item.sale_value,itemClone,elementClone,);
+        }
+      }
+
     } else if (inventory === playerInventory) {
+      if(inventoryType==='weapons'){
       addToTrade(itemButton, item, itemDiv, itemContainer, tradeArray.sell,
           inventoryType,
           tradeSelling, -item.sale_value);
+      }
+      else{
+        let itemClone=structuredClone(item);
+        let elementClone=itemDiv.cloneNode(true);
+        itemButton.onclick = function() {
+          addToTradeConsumable(itemButton,item,itemDiv,itemContainer,tradeArray.sell,inventoryType,tradeSelling,-item.sale_value,itemClone,elementClone);
+        }
+      }
     }
   }
 }
-
+function addToTradeConsumable(
+    button, item, itemdiv, itemContainer, tradesArray, inventoryType,
+    tradeContainer, sale_value,itemClone,elementClone) {
+    let quantityP=itemdiv.childNodes.item(1);
+    let quantityClone=elementClone.childNodes.item(1);
+    if(tradesArray[inventoryType].includes(itemClone))
+    {
+      let index=tradesArray[inventoryType].indexOf(itemClone);
+      let itemi=tradesArray[inventoryType][index];
+      itemi.quantity+=1;
+      quantityClone.innerHTML=`${itemClone.quantity}`;
+      console.log(itemi.quantity);
+      if(tradeContainer===tradeSelling){
+        item.quantity-=1;
+        console.log(item.quantity);
+        quantityP.innerHTML=`${item.quantity}`;
+        if (item.quantity===0){
+          itemdiv.style.display="none";
+        }
+      }
+    }
+    else{
+          tradesArray[inventoryType].push(itemClone);
+          itemClone.quantity=1;
+          quantityClone.innerHTML=`${itemClone.quantity}`;
+          if (tradeContainer===tradeSelling){
+            item.quantity-=1;
+            quantityP.style.display='block';
+            quantityP.innerHTML=`${item.quantity}`;
+          }
+          tradeContainer.appendChild(elementClone);
+          button=elementClone.childNodes.item(0);
+          button.innerText = 'Poista';
+          button.onclick=function() {
+            removeFromTradeCons(itemdiv,elementClone,item,itemClone,tradesArray,inventoryType,sale_value);
+          }
+    }
+    console.log(tradeWindow);
+    console.log(tradeContainer);
+    gold -= sale_value;
+    goldText.innerText = `Gold: ${gold}`;
+    tradeContainer.style.display = 'Block';
+}
+function removeFromTradeCons(itemdiv,divClone,item,itemClone,tradesArray,inventoryType,sale_value){
+  itemClone.quantity-=1;
+  divClone.childNodes.item(1).innerHTML=`${itemClone.quantity}`;
+  gold += sale_value;
+  goldText.innerText = `Gold: ${gold}`;
+  if(tradesArray===tradeArray.sell){
+  item.quantity+=1;
+  itemdiv.style.display="block";
+  itemdiv.childNodes.item(1).innerHTML=`${item.quantity}`;
+  }
+  if (itemClone.quantity===0){
+    let index=tradesArray[inventoryType].indexOf(itemClone);
+    tradesArray[inventoryType].splice(index);
+    divClone.remove();
+  }
+}
 function addToTrade(
     button, item, itemdiv, itemContainer, tradesArray, inventoryType,
     tradeContainer, sale_value) {
   button.onclick = function() {
     if (tradesArray === tradeArray.buy) {
-      let infoP = itemdiv.lastChild.cloneNode(true);
-      itemdiv = itemdiv.cloneNode();
-      button = button.cloneNode(true);
-      itemdiv.appendChild(button);
-      itemdiv.appendChild(infoP);
+      itemdiv = itemdiv.cloneNode(true);
+      button = itemdiv.childNodes.item(0);
     }
     button.innerText = 'Poista';
     console.log(tradeWindow);
@@ -193,7 +272,13 @@ function removeFromTrade(
     }
   };
 }
-
+async function unload(){
+  let deletable=document.getElementsByClassName('itemInfo');
+  for(let element of deletable){
+    element.remove();
+  }
+  shopCreated=false;
+}
 async function completeTrade(tradeType, itemType, inventory) {
   if (tradeArray[tradeType][itemType].length !== 0) {
     for (let item of tradeArray[tradeType][itemType]) {
