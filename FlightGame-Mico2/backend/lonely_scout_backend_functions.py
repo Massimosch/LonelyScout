@@ -61,13 +61,13 @@ def get_consumables(game_id): #funktio, joka tekee consumables listan
     return consumables
 
 def get_weapons(game_id):
-    q = f"""Select item_id, name, type, sale_value, damage, current_durability, durability, quantity
+    q = f"""Select item_id, name, type, sale_value, damage, current_durability, durability
               from  weapon_Inventory inner join weapons on weapon_Inventory.item_id=weapons.id
               WHERE weapon_Inventory.game_id={game_id}"""
     weapons = exequte_this_query(q)
     return weapons
 
 
-
+print(get_weapons(1))
 
 
