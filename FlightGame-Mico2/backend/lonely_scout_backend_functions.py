@@ -67,22 +67,7 @@ def get_weapons(game_id):
     weapons = exequte_this_query(q)
     return weapons
 
-def move_to_checkpoint(player_name):
-    query = f"SELECT current_checkpoint FROM game WHERE player_name = '{player_name}'"
-    result = exequte_this_query(query)
-    last_checkpoint = get_last_checkpoint()
-    player_data = get_game(player_name)
 
-    if result:
-        current_checkpoint = result[0]['current_checkpoint']
-    else:
-        return json.dumps({"message": 'Pelaaja tietoja ei löydy'}), 404
 
-    if current_checkpoint < last_checkpoint:
-        new_checkpoint = int(current_checkpoint) + 1
-        update_game(player_name, new_checkpoint, health=100, score=100, is_ended=False)
-        return json.dumps({"message": f'Liikuttiin {new_checkpoint}'}), 200
-    else:
-        update_game(player_name, current_checkpoint, health=100, score=100, is_ended=True)
-        return json.dumps({"message": 'Ei liikuttu koska ollaan viimisessä checkpointissa.'})
+
 
