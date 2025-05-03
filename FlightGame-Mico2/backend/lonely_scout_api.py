@@ -26,6 +26,11 @@ def save_game(game_id):
     health = int(data["player_stats"]["health"])
     score = int(data["player_stats"]["score"])
     is_ended = True if current_checkpoint_id == last_checkpoint else False
+    # if player wants to save the second unfinished game, the first one is deleted
+    if is_ended == False:
+        first_unfinished_game = lonely_scout_backend_functions.get_game(data["player_stats"]["player"])
+        if first_unfinished_game:
+            lonely_scout_backend_functions.delete_game(first_unfinished_game[0]["id"])
     lonely_scout_backend_functions.update_game(game_id, current_checkpoint_id, health, score, is_ended)
     return '', 200
 
@@ -34,7 +39,7 @@ def start_new_game(player_name):
     result = lonely_scout_backend_functions.get_game(player_name)
     if len(result) > 0:
         lonely_scout_backend_functions.delete_game(player_name)
-    checkpoints = lonely_scout_backend_functions.get_checkpoints()
+    # checkpoints = lonely_scout_backend_functions.get_checkpoints()
     current_checkpoint = lonely_scout_backend_functions.get_checkpoints()[0]['id'] #to get the first checkpoint id
     print(current_checkpoint)
     result = lonely_scout_backend_functions.start_new_game(player_name, current_checkpoint, 100, 0)
