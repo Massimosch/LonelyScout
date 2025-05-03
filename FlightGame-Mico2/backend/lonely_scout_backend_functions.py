@@ -1,4 +1,6 @@
 import database
+import json
+
 
 def exequte_this_query(query):
     cursor = database.yhteys.cursor(dictionary=True)
@@ -52,9 +54,20 @@ def get_checkpoints():
     return checkpoints
 
 def get_consumables(game_id): #funktio, joka tekee consumables listan
-    q=f"""Select name, heal_amount, count(*) as 'quantity' 
+    q=f"""Select item_id, name, heal_amount, quantity 
           from  consumable_Inventory inner join consumables on consumable_Inventory.item_id=consumables.id
-          WHERE consumable_Inventory.game_id={game_id} 
-          GROUP BY consumables.name"""
+          WHERE consumable_Inventory.game_id={game_id}"""
     consumables=exequte_this_query(q)
     return consumables
+
+def get_weapons(game_id):
+    q = f"""Select item_id, name, type, sale_value, damage, current_durability, durability
+              from  weapon_Inventory inner join weapons on weapon_Inventory.item_id=weapons.id
+              WHERE weapon_Inventory.game_id={game_id}"""
+    weapons = exequte_this_query(q)
+    return weapons
+
+
+
+
+

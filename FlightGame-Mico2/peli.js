@@ -14,7 +14,6 @@ const consumables_buttons = document.querySelectorAll('.consumable-container');
 const locationName = document.querySelector('#location_name');
 const locationImage = document.querySelector('#location_image');
 const liikuBtn = document.querySelector('#move');
-let current_consumables, current_stats;
 
 const gameState = {
   playerState:
@@ -69,6 +68,14 @@ const gameState = {
     health: 50,
   },
 };
+let current_consumables= gameState.food;
+let current_stats = gameState.playerState;
+
+function change_symbol_in_name(dictionary,symbol1,symbol2) {
+   for (let item of dictionary){
+      item.name=item.name.replace(symbol1,symbol2)
+    }
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -108,7 +115,6 @@ if (liikuBtn) {
     }
   });
 }
-
 if (takaisinBtn) {
   takaisinBtn.addEventListener('click', () => {
     window.location.href = 'menu.html';
@@ -140,23 +146,22 @@ async function updateGameState(username) {
 
     let user_consumables;
     if (!res_data.consumables || res_data.consumables.length === 0) {
-      user_consumables = [
-        {'name': 'nakki', 'heal_amount': 5, 'quantity': 0},
-        {'name': 'parantava-juoma', 'heal_amount': 25, 'quantity': 0},
-        {'name': 'piirakka', 'heal_amount': 15, 'quantity': 0},
-      ];
+      return;
     } else {
-      user_consumables = res_data.consumables;
+      gameState.food = res_data.consumables;
     }
     console.log(user_consumables);
     current_consumables = user_consumables;
+    change_symbol_in_name(current_consumables,' ','-')
 
-    for (let consumable of user_consumables) {
+    for (let consumable of current_consumables) {
       const item = consumables.querySelector(`#${consumable.name}`);
       const item_quantity = item.querySelector('.quantity');
       item_quantity.innerHTML = `${consumable.quantity}`;
     }
-  } catch (e) {
+  }
+
+  catch (e) {
     console.log(e);
   }
 }
