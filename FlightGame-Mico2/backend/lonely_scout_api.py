@@ -14,7 +14,10 @@ def load_game(player_name):
     game_data["player_stats"] = result[0]
     game_id = game_data["player_stats"]["id"]
     consumables=lonely_scout_backend_functions.get_consumables(game_id)
+    weapons=lonely_scout_backend_functions.get_weapons(game_id)
     game_data["consumables"]=consumables
+    game_data["weapons"]=weapons
+    print(game_data)
     return game_data
 
 @app.route('/save_game/<game_id>', methods=['POST'])
