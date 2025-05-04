@@ -27,20 +27,31 @@
     flex: 1;
 }
 
+.status-box {
+    width: 252.516px;
+}
+#weapons {
+    display:flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap:1rem;
+    row-gap: 0;
+}
+
 .status-box #consumables {
     display: flex;
     gap: 1rem;
     align-items: center;
 }
 
-.consumable-container {
+.item-container {
     position: relative;
     display: flex;
     cursor: pointer;
 
 }
 
-.consumable-popup {
+.item-popup {
     display: none;
     position: absolute;
     top: 100%;
@@ -53,11 +64,11 @@
     border-radius:0.5em;
 }
 
-.consumable-container:hover .consumable-popup{
+.item-container:hover .item-popup{
     display:block;
 }
 
-.consumable-container:active {
+.item-container:active {
     transform: scale(0.8);
 }
 
