@@ -15,28 +15,30 @@
       <p id="health">TERVEYS: ei mitään</p>
       <p id="score">SCORE: ei mitään</p>
       <p id="checkpoint">PAIKKA: ei mitään </p>
-      <p>ASEET (VALITTU ON KÄYTÖSSÄ):</p>
-      <select name="aseet" id="aseet">
-        <option value="Nyrkit">Nyrkit</option>
-        <option value="Miekka">Miekka</option>
-        <option value="Jousi">Jousi</option>
-      </select>
+      <div id="weapons">
+        <p>ASEET:</p>
+        <div class="item-container">
+          <span>👊</span>
+          <div class="item-popup">name:fists | type:none |
+          sale value:none | damage:10 | current durability:none</div>
+        </div>
+      </div>
       <div id="consumables">
         <p>CONSUMABLES: </p>
-        <div id="nakki" class="consumable-container">
+        <div id="nakki" class="item-container">
           <span>🌭</span>
           <span class="quantity">0</span>
-          <div class="consumable-popup">Sale value:2  Heal amount:5</div>
+          <div class="item-popup">Sale value:2 | Heal amount:5</div>
         </div>
-        <div id="parantava-juoma" class="consumable-container">
+        <div id="parantava-juoma" class="item-container">
           <span>🧪</span>
           <span class="quantity">0</span>
-          <div class="consumable-popup">Sale value:30  Heal amount:25</div>
+          <div class="item-popup">Sale value:30 | Heal amount:25</div>
         </div>
-        <div id="piirakka" class="consumable-container">
+        <div id="piirakka" class="item-container">
           <span>🥧</span>
           <span class="quantity">0</span>
-          <div class="consumable-popup">Sale value:20  Heal amount:15</div>
+          <div class="item-popup">Sale value:20 | Heal amount:15</div>
         </div>
       </div>
         <img src="images/adventurer.png" alt="adventurer kuva">
