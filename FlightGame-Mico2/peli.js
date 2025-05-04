@@ -88,10 +88,13 @@ if (liikuBtn) {
       let data = {
         player_stats:
             {
+              player: gameState.playerState.player,
               current_checkpoint_id: gameState.playerState.current_checkpoint_id,
               health: gameState.playerState.health,
               score: gameState.playerState.score,
             },
+        consumables: gameState.food,
+        weapons: gameState.weapons
       };
 
       const request = await fetch(
