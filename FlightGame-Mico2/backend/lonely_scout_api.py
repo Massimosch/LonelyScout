@@ -23,6 +23,7 @@ def load_game(player_name):
 def save_game(game_id):
     last_checkpoint = lonely_scout_backend_functions.get_last_checkpoint()
     data = request.json
+# we don't need player name because we dont' change it
     current_checkpoint_id = int(data["player_stats"]["current_checkpoint_id"])
     health = int(data["player_stats"]["health"])
     score = int(data["player_stats"]["score"])
@@ -41,7 +42,7 @@ def save_game(game_id):
 @app.route('/new_game/<player_name>', methods=['POST'])
 def start_new_game(player_name):
     result = lonely_scout_backend_functions.get_game(player_name)
-    if result:
+    if len(result) > 0:
         lonely_scout_backend_functions.delete_game(player_name)
     # checkpoints = lonely_scout_backend_functions.get_checkpoints()
     current_checkpoint = lonely_scout_backend_functions.get_checkpoints()[0]['id'] #to get the first checkpoint id
