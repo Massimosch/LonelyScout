@@ -25,7 +25,26 @@ const gameState = {
         checkpoint_name: '',
         current_checkpoint_id: 1,
       },
-  food: [],
+  food: [
+      {
+         item_id: 1,
+         name: 'parantava juoma',
+         heal_amount: 25,
+         quantity: 0
+      },
+      {
+         item_id: 2,
+         name: 'nakki',
+         heal_amount: 5,
+         quantity: 0,
+      },
+      {
+          item_id: 3,
+          name: 'piirakka',
+          heal_amount: 15,
+          quantity: 0
+      }
+  ],
   weapons: [
     {
       name: 'nyrkki',
@@ -68,7 +87,7 @@ const gameState = {
     health: 50,
   },
 };
-let current_consumables= gameState.food;
+let current_consumables=gameState.food;
 let current_stats = gameState.playerState;
 
 function change_symbol_in_name(dictionary,symbol1,symbol2) {
@@ -108,6 +127,7 @@ if (liikuBtn) {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data),
           });
+
       console.log('I am cheking player name', gameState.playerState.player)
       window.location.href = `battle.html?username=${gameState.playerState.player}`;
     } catch (e) {
@@ -144,14 +164,15 @@ async function updateGameState(username) {
     locationName.innerHTML = `${res_data.player_stats.checkpoint_name}`;
     locationImage.src = `images/${res_data.player_stats.checkpoint_name}.png`;
 
-    let user_consumables;
+
     if (!res_data.consumables || res_data.consumables.length === 0) {
       return;
     } else {
       gameState.food = res_data.consumables;
     }
-    console.log(user_consumables);
-    current_consumables = user_consumables;
+
+    current_consumables=gameState.food;
+
     change_symbol_in_name(current_consumables,' ','-')
 
     for (let consumable of current_consumables) {
@@ -191,6 +212,6 @@ async function consumables_click(event) {
         alert('You dont have this item');
       }
     }
-    isProcessing = false;
   }
+  isProcessing = false;
 }
