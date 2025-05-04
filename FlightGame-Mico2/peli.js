@@ -10,7 +10,8 @@ const checkpoint = document.querySelector('#checkpoint');
 const takaisinBtn = document.querySelector('#back_to_menu');
 const inventory = document.querySelector('#inventory');
 const consumables = document.querySelector('#consumables');
-const consumables_buttons = document.querySelectorAll('.consumable-container');
+const weapons=document.querySelector('#weapons');
+const consumables_buttons = consumables.querySelectorAll('.item-container');
 const locationName = document.querySelector('#location_name');
 const locationImage = document.querySelector('#location_image');
 const liikuBtn = document.querySelector('#move');
@@ -44,41 +45,6 @@ const gameState = {
           heal_amount: 15,
           quantity: 0
       }
-  ],
-  weapons: [
-    {
-      name: 'nyrkki',
-      damage: 10,
-      durability: Infinity,
-    },
-    {
-      name: 'steel sword',
-      type: 'sword',
-      saleValue: 250,
-      damage: 100,
-      durability: 10,
-    },
-    {
-      name: 'slingshot',
-      type: 'ranged',
-      saleValue: 100,
-      damage: 50,
-      durability: 10,
-    },
-    {
-      name: 'bow',
-      type: 'ranged',
-      saleValue: 150,
-      damage: 50,
-      durability: 10,
-    },
-    {
-      name: 'magic staff',
-      type: 'magic',
-      saleValue: 175,
-      damage: 60,
-      durability: 10,
-    },
   ],
   enemy: {
     name: 'orc',
@@ -127,7 +93,6 @@ if (liikuBtn) {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data),
           });
-
       console.log('I am cheking player name', gameState.playerState.player)
       window.location.href = `battle.html?username=${gameState.playerState.player}`;
     } catch (e) {
@@ -164,10 +129,14 @@ async function updateGameState(username) {
     locationName.innerHTML = `${res_data.player_stats.checkpoint_name}`;
     locationImage.src = `images/${res_data.player_stats.checkpoint_name}.png`;
 
+    gameState.weapons=res_data.weapons
 
-    if (!res_data.consumables || res_data.consumables.length === 0) {
-      return;
-    } else {
+    if (gameState.weapons.length>0) {
+      create_weapon_elements(gameState.weapons)
+      }
+
+
+    if (res_data.consumables && res_data.consumables.length > 0) {
       gameState.food = res_data.consumables;
     }
 
@@ -214,4 +183,25 @@ async function consumables_click(event) {
     }
   }
   isProcessing = false;
+}
+
+function create_weapon_elements(weaponList){
+  const emojiMap = {
+  'steel sword': '🗡️',
+  'bow': '🏹',
+  'slingshot': '🪀',
+  'magic staff': '🔮',
+  };
+  for (let weapon of weaponList){
+    const weaponElement=document.createElement('div')
+    weaponElement.classList.add('item-container')
+    const weaponEmoji=document.createElement('span')
+    weaponEmoji.textContent=`${emojiMap[weapon.name]}`
+    const popup=document.createElement('div')
+    popup.classList.add('item-popup')
+    popup.textContent=`name:${weapon.name} | type:${weapon.type} | sale value:${weapon.sale_value} | damage:${weapon.damage} | current durability:${weapon.current_durability}`
+    weaponElement.appendChild(weaponEmoji)
+    weaponElement.appendChild(popup)
+    weapons.appendChild(weaponElement)
+  }
 }
