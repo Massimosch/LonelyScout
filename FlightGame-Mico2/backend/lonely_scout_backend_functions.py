@@ -104,7 +104,7 @@ def get_weapons(game_id):
     weapons = exequte_this_query(q)
     return weapons
 
-
-
-
-
+def get_best_scores():
+    q = f"SELECT player_name, score FROM game WHERE is_ended=1 ORDER BY score DESC LIMIT 10"
+    result = exequte_this_query(q)
+    return result

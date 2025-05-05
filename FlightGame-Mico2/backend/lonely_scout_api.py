@@ -60,6 +60,10 @@ def get_random_enemy():
     result = lonely_scout_backend_functions.get_random_enemy()
     return result
 
+@app.route('/best_scores')
+def get_best_scores():
+    result = lonely_scout_backend_functions.get_best_scores()
+    return result
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
