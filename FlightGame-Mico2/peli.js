@@ -73,36 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 if (liikuBtn) {
-  liikuBtn.addEventListener('click', async () => {
-    if (!gameState.playerState.player)
-      return;
-
-    try {
-      let data = {
-        player_stats:
-            {
-              player: gameState.playerState.player,
-              current_checkpoint_id: gameState.playerState.current_checkpoint_id,
-              health: gameState.playerState.health,
-              score: gameState.playerState.score,
-            },
-        consumables: gameState.food,
-        weapons: gameState.weapons
-      };
-
-      const request = await fetch(
-          `http://localhost:8000/save_game/${gameState.playerState.game_id}`,
-          {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data),
-          });
-      console.log('I am cheking player name', gameState.playerState.player)
-      window.location.href = `battle.html?username=${gameState.playerState.player}`;
-    } catch (e) {
-      console.log(e);
-    }
-  });
+  liikuBtn.addEventListener('click', save_game );
 }
 if (takaisinBtn) {
   takaisinBtn.addEventListener('click', () => {
@@ -215,3 +186,34 @@ function create_weapon_elements(weaponList){
     weapons.appendChild(weaponElement)
   }
 }
+
+async function save_game () {
+    if (!gameState.playerState.player)
+      return;
+
+    try {
+      let data = {
+        player_stats:
+            {
+              player: gameState.playerState.player,
+              current_checkpoint_id: gameState.playerState.current_checkpoint_id,
+              health: gameState.playerState.health,
+              score: gameState.playerState.score,
+            },
+        consumables: gameState.food,
+        weapons: gameState.weapons || []
+      };
+
+      const request = await fetch(
+          `http://localhost:8000/save_game/${gameState.playerState.game_id}`,
+          {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data),
+          });
+      console.log('I am cheking player name', gameState.playerState.player)
+      window.location.href = `battle.html?username=${gameState.playerState.player}`;
+    } catch (e) {
+      console.log(e);
+    }
+  }
