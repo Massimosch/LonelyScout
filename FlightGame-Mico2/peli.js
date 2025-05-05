@@ -15,6 +15,7 @@ const consumables_buttons = consumables.querySelectorAll('.item-container');
 const locationName = document.querySelector('#location_name');
 const locationImage = document.querySelector('#location_image');
 const liikuBtn = document.querySelector('#move');
+const tallentaBtn = document.querySelector('#save_game')
 
 const gameState = {
   playerState:
@@ -108,6 +109,12 @@ if (takaisinBtn) {
     window.location.href = 'menu.html';
   });
 }
+
+
+tallentaBtn.addEventListener('click', () => {
+    //to call save_game function
+  });
+
 
 async function updateGameState(username) {
 
