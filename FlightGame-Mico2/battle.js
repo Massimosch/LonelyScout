@@ -7,6 +7,7 @@ const enemy_weakness = document.querySelector('#enemy_weakness');
 const enemy_damage = document.querySelector('#enemy_damage');
 const enemy_health = document.querySelector('#enemy_health');
 const enemy_name = document.querySelector('#enemy_name');
+const enemyImage = document.querySelector('#enemy_image');
 const weapons = document.querySelector('#aseet');
 const hit = document.querySelector('#hit');
 const battleModal = document.getElementById('battleResultModal');
@@ -27,7 +28,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 weapons.addEventListener('change', () => {
-  battleState.playerState.selectedWeapon = battleState.weapons[weapons.value];
+   battleState.playerState.selectedWeapon = battleState.weapons[weapons.value];
+   console.log(weapons.value, 'i am here', battleState.playerState.selectedWeapon)
 });
 
 hit.addEventListener('click', runFightRound);
@@ -53,36 +55,36 @@ const battleState = {
     {
       name: 'nyrkki',
       damage: 10,
-      durability: Infinity,
-    },
-    {
-      name: 'steel sword',
-      type: 'sword',
-      saleValue: 250,
-      damage: 100,
-      durability: 10,
-    },
-    {
-      name: 'slingshot',
-      type: 'ranged',
-      saleValue: 100,
-      damage: 50,
-      durability: 10,
-    },
-    {
-      name: 'bow',
-      type: 'ranged',
-      saleValue: 150,
-      damage: 50,
-      durability: 10,
-    },
-    {
-      name: 'magic staff',
-      type: 'magic',
-      saleValue: 175,
-      damage: 60,
-      durability: 10,
-    },
+      current_durability: Infinity,
+    }
+    // {
+    //   name: 'steel sword',
+    //   type: 'sword',
+    //   saleValue: 250,
+    //   damage: 100,
+    //   durability: 10,
+    // },
+    // {
+    //   name: 'slingshot',
+    //   type: 'ranged',
+    //   saleValue: 100,
+    //   damage: 50,
+    //   durability: 10,
+    // },
+    // {
+    //   name: 'bow',
+    //   type: 'ranged',
+    //   saleValue: 150,
+    //   damage: 50,
+    //   durability: 10,
+    // },
+    // {
+    //   name: 'magic staff',
+    //   type: 'magic',
+    //   saleValue: 175,
+    //   damage: 60,
+    //   durability: 10,
+    // },
   ],
   enemy: {
     name: 'orc',
@@ -105,7 +107,8 @@ async function updateGameState(username) {
         1;
     battleState.playerState.checkpoint_name = res_data.player_stats.checkpoint_name
     // to add weapons, to add food
-
+    battleState.food=res_data.consumables
+    res_data.weapons.forEach(w =>battleState.weapons.push(w))
     console.log(res_data);
 
     const enemy_res = await fetch('http://localhost:8000/get_random_enemy');
@@ -126,16 +129,23 @@ function updateBattleView() {
   enemy_weakness.innerHTML = `HAAVOITTUVUUS: ${battleState.enemy.weakness}`;
   enemy_damage.innerHTML = `ISKUVARIO: ${battleState.enemy.damage}`;
   enemy_health.innerHTML = `TERVEYS: ${battleState.enemy.health}`;
+  enemyImage.src = `images/enemies/${battleState.enemy.name}.png`;
   checkpoint.innerHTML = `PAIKKA: ${battleState.playerState.checkpoint_name}`
 
-  for (let i = 0; i < battleState.weapons.length; i++) {
-    const option = document.createElement('option');
-    option.value = i;
-    option.textContent = `${battleState.weapons[i].name} (kestävyys: ${battleState.weapons[i].durability}, damage: ${battleState.weapons[i].damage})`;
-    weapons.appendChild(option);
+  view_weapons()
+}
+function view_weapons() {
+    weapons.innerHTML = '';
+//    console.log(battleState.weapons)
+    for (let i = 0; i < battleState.weapons.length; i++) {
+      if (battleState.weapons[i].current_durability > 0){
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `${battleState.weapons[i].name} (kestävyys: ${battleState.weapons[i].current_durability}, damage: ${battleState.weapons[i].damage})`;
+        weapons.appendChild(option);
+      }
   }
 }
-
 async function runFightRound() {
   if (battleState.playerState.selectedWeapon.type ===
       battleState.enemy.weakness) {
@@ -147,7 +157,9 @@ async function runFightRound() {
   }
   //hit
   enemy_health.innerHTML = `TERVEYS: ${battleState.enemy.health}`;
-  battleState.playerState.selectedWeapon.durability -= 1;
+  battleState.playerState.selectedWeapon.current_durability -= 1;
+ //I need to renew weapons display
+  await view_weapons()
 
   if (battleState.enemy.health > 0) {
 
