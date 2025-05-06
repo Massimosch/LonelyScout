@@ -16,6 +16,9 @@ const locationName = document.querySelector('#location_name');
 const locationImage = document.querySelector('#location_image');
 const liikuBtn = document.querySelector('#move');
 const tallentaBtn = document.querySelector('#save_game')
+const helpBtn = document.querySelector('#help');
+const modal = document.querySelector('#helpModal');
+const closeBtn = document.querySelector('.close');
 
 const gameState = {
   playerState:
@@ -71,6 +74,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     alert('Username parametri puuttuu');
   }
 });
+
+if (helpBtn) {
+    helpBtn.addEventListener('click', () => {
+        modal.style.display = 'block';
+    });
+}
+
+if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+}
+
 
 if (liikuBtn) {
   liikuBtn.addEventListener('click', save_game );

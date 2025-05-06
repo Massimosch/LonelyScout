@@ -132,3 +132,58 @@ button {
 button:hover {
     transform: scale(1.1);
 }
+
+.modal {
+    padding-top: 1rem;
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(74,20,23,0.7);
+}
+
+.modal h2 {
+    text-align: center;
+}
+
+.modal .instructions {
+    text-align: center;
+}
+
+.modal .instructions li {
+    text-align: left;
+}
+
+.modal-content {
+    background-color: floralwhite;
+    margin: auto;
+    padding: 1rem;
+    border: 2px solid black;
+    border-radius: 1rem;
+    max-width: 40%;
+    font-family: "Source Code Pro", monospace;
+}
+
+.close {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.instructions {
+    line-height: 1.6;
+}
+
+.instructions ul {
+    margin: 1rem;
+    padding-left: 1rem;
+}
+
+.instructions li {
+    margin-bottom: 0.5rem;
+}
