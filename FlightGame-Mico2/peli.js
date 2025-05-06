@@ -73,35 +73,41 @@ document.addEventListener('DOMContentLoaded', async () => {
   } else {
     alert('Username parametri puuttuu');
   }
-});
+  });
 
-if (helpBtn) {
+  if (helpBtn) {
     helpBtn.addEventListener('click', () => {
         modal.style.display = 'block';
     });
-}
+  }
 
-if (closeBtn) {
+  if (closeBtn) {
     closeBtn.addEventListener('click', () => {
         modal.style.display = 'none';
     });
-}
+  }
 
 
-if (liikuBtn) {
-  liikuBtn.addEventListener('click', save_game );
-}
+  if (liikuBtn) {
+    liikuBtn.addEventListener('click', async () => {
+      await save_game();
+      window.location.href = `battle.html?username=${gameState.playerState.player}`;
+    })
+  }
 
-if (takaisinBtn) {
-  takaisinBtn.addEventListener('click', () => {
-      window.location.href = 'menu.html';
-  });
-}
+  if (takaisinBtn) {
+    takaisinBtn.addEventListener('click', () => {
+        window.location.href = 'menu.html';
+    });
+  }
 
 
-tallentaBtn.addEventListener('click', () => {
-    //to call save_game function
-  });
+  if (tallentaBtn) {
+    tallentaBtn.addEventListener('click', async()=> {
+      await save_game()
+      alert ("Peli on talennettu")
+    })
+  }
 
 
 async function updateGameState(username) {
@@ -229,7 +235,6 @@ async function save_game () {
             body: JSON.stringify(data),
           });
       console.log('I am cheking player name', gameState.playerState.player)
-      window.location.href = `battle.html?username=${gameState.playerState.player}`;
     } catch (e) {
       console.log(e);
     }
