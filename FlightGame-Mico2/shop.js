@@ -22,7 +22,13 @@ let shopInventory = {
       sale_value: 140,
       damage: '10',
       durability: '100',
-    }], consumables: [],
+    }], consumables: [
+    {
+      name: 'apple',
+      sale_value: 10,
+      heal_amount: '20',
+      quantity: 1,
+    }, {name: 'nakki', sale_value: 10, heal_amount: '20', quantity: 1}],
 };
 const shopModal = document.getElementById('shopModal');
 const shopButt = document.getElementById('shopButton');
@@ -125,15 +131,28 @@ function createInventoryInfo(inventory, inventoryType, itemContainer) {
     itemDiv.classList.add('itemInfo');
     itemButton.innerText = 'Siirrä koriin';
     itemDiv.appendChild(itemButton);
+
     if (inventoryType === 'weapons') {
-      itemInfoParagraph.innerHTML = `<b><b>${item.name}</b></b><br><b>Tyyppi: </b>${item.type}<b> Vahinko: </b> ${item.damage}<br><b> Kestävyys: </b> ${item.durability}<b> Hinta: </b> ${item.sale_value}`;
+      itemInfoParagraph.innerHTML = `<b>${item.name}</b><br><br><b>Tyyppi: </b>${item.type}<b> Vahinko: </b> ${item.damage}<br><b> Kestävyys: </b> ${item.durability}<b> Hinta: </b> ${item.sale_value}`;
     } else {
-      itemInfoParagraph.innerHTML = `<b><b>${item.name}</b><br><b> Parannusvoima: </b> ${item.heal_amount}<b> Hinta: </b> ${item.sale_value}`;
+      let quantityInput= document.createElement('input');
+      let quantityLabel = document.createElement('label');
+      quantityInput.id="quantityInput";
+      quantityLabel.htmlFor='quantityInput';
+      quantityInput.type="number";
+      quantityInput.max= item.quantity.toString();
+      quantityInput.min="1";
+      quantityInput.defaultValue="1";
+      itemInfoParagraph.innerHTML = `<b>${item.name}</b><br><br><b> Parannusvoima: </b> ${item.heal_amount}<b><br>Yhden hinta: </b> ${item.sale_value}`;
       let quantityP=document.createElement('p');
-      quantityP.innerHTML=`${item.quantity}`;
+      quantityP.innerHTML=`<b>Hinta: </b>${item.sale_value*item.quantity}`;
       if (inventory===shopInventory){
         quantityP.style.display="none";
+        quantityInput.max="100";
       }
+      quantityLabel.innerText=`/${quantityInput.max}`
+      itemDiv.appendChild(quantityInput);
+      itemDiv.appendChild(quantityLabel);
       itemDiv.appendChild(quantityP);
     }
     itemDiv.appendChild(itemInfoParagraph);
@@ -148,7 +167,7 @@ function createInventoryInfo(inventory, inventoryType, itemContainer) {
         let itemClone=structuredClone(item);
         let elementClone=itemDiv.cloneNode(true);
         itemButton.onclick = function() {
-          addToTradeConsumable(itemButton,item,itemDiv,itemContainer,tradeArray.sell,inventoryType,tradeSelling,-item.sale_value,itemClone,elementClone,);
+          addToTradeConsumable(itemButton,item,itemDiv,itemContainer,tradeArray.buy,inventoryType,tradeBuying,item.sale_value,itemClone,elementClone);
         }
       }
 
@@ -171,61 +190,86 @@ function createInventoryInfo(inventory, inventoryType, itemContainer) {
 function addToTradeConsumable(
     button, item, itemdiv, itemContainer, tradesArray, inventoryType,
     tradeContainer, sale_value,itemClone,elementClone) {
-    let quantityP=itemdiv.childNodes.item(1);
-    let quantityClone=elementClone.childNodes.item(1);
-    if(tradesArray[inventoryType].includes(itemClone))
-    {
-      let index=tradesArray[inventoryType].indexOf(itemClone);
-      let itemi=tradesArray[inventoryType][index];
-      itemi.quantity+=1;
-      quantityClone.innerHTML=`${itemClone.quantity}`;
-      console.log(itemi.quantity);
-      if(tradeContainer===tradeSelling){
-        item.quantity-=1;
+    let quantityInput=itemdiv.childNodes.item(1);
+    let quantityInputClone= elementClone.childNodes.item(1);
+    let quantityValue=parseInt(quantityInput.value);
+    let quantityMax= parseInt(quantityInput.max);
+    let quantityP=itemdiv.childNodes.item(3);
+    let quantityClone=elementClone.childNodes.item(3);
+    if (quantityValue>quantityMax){
+      quantityValue=quantityMax;
+    }
+    for (let i=1;i<=quantityValue;i++) {
+      if (tradesArray[inventoryType].includes(itemClone)) {
+        itemClone.quantity += 1;
         console.log(item.quantity);
-        quantityP.innerHTML=`${item.quantity}`;
-        if (item.quantity===0){
-          itemdiv.style.display="none";
+        if (tradeContainer === tradeSelling) {
+          item.quantity -= 1;
+          console.log(item.quantity);
+          if (item.quantity === 0) {
+            itemdiv.style.display = "none";
+          }
+        }
+      } else {
+        tradesArray[inventoryType].push(itemClone);
+        itemClone.quantity = 1;
+        quantityClone.style.display = "block";
+        if (tradeContainer === tradeSelling) {
+          item.quantity -= 1;
+          quantityP.style.display = 'block';
+
+        }
+        tradeContainer.appendChild(elementClone);
+        button = elementClone.childNodes.item(0);
+        button.innerText = 'Poista';
+        button.onclick = function() {
+          removeFromTradeCons(itemdiv, elementClone, item, itemClone,
+              tradesArray, inventoryType, sale_value);
         }
       }
+      quantityP.innerHTML = `<b>Hinta: </b>${item.sale_value*item.quantity}`;
+      quantityClone.innerHTML = `<b>Hinta: </b>${itemClone.sale_value*itemClone.quantity}`;
+      if (tradeContainer===tradeSelling){
+        quantityInput.max=item.quantity.toString();
+      }
+      quantityInputClone.max=itemClone.quantity.toString();
+      itemdiv.childNodes.item(2).innerText=`/${quantityInput.max}`;
+      elementClone.childNodes.item(2).innerText=`/${quantityInputClone.max}`;
+      console.log(tradeWindow);
+      console.log(tradeContainer);
+      gold -= sale_value;
+      goldText.innerText = `Gold: ${gold}`;
+
+      tradeContainer.style.display = 'Block';
     }
-    else{
-          tradesArray[inventoryType].push(itemClone);
-          itemClone.quantity=1;
-          quantityClone.innerHTML=`${itemClone.quantity}`;
-          if (tradeContainer===tradeSelling){
-            item.quantity-=1;
-            quantityP.style.display='block';
-            quantityP.innerHTML=`${item.quantity}`;
-          }
-          tradeContainer.appendChild(elementClone);
-          button=elementClone.childNodes.item(0);
-          button.innerText = 'Poista';
-          button.onclick=function() {
-            removeFromTradeCons(itemdiv,elementClone,item,itemClone,tradesArray,inventoryType,sale_value);
-          }
-    }
-    console.log(tradeWindow);
-    console.log(tradeContainer);
-    gold -= sale_value;
-    goldText.innerText = `Gold: ${gold}`;
-    tradeContainer.style.display = 'Block';
 }
 function removeFromTradeCons(itemdiv,divClone,item,itemClone,tradesArray,inventoryType,sale_value){
-  itemClone.quantity-=1;
-  divClone.childNodes.item(1).innerHTML=`${itemClone.quantity}`;
-  gold += sale_value;
-  goldText.innerText = `Gold: ${gold}`;
-  if(tradesArray===tradeArray.sell){
-  item.quantity+=1;
-  itemdiv.style.display="block";
-  itemdiv.childNodes.item(1).innerHTML=`${item.quantity}`;
+  let quantityInput=divClone.childNodes.item(1);
+  let quantityValue=parseInt(quantityInput.value);
+  let quantityMax= parseInt(quantityInput.max);
+  if (quantityValue>itemClone.quantity){quantityValue=quantityMax;}
+  for (let i=1;i<=quantityValue;i++) {
+    itemClone.quantity -= 1;
+    divClone.childNodes.item(
+        3).innerHTML = `<b>Hinta: </b>${itemClone.sale_value*itemClone.quantity}`;
+    quantityInput.max=itemClone.quantity.toString();
+    divClone.childNodes.item(2).innerText=`/${itemClone.quantity}`;
+    gold += sale_value;
+    goldText.innerText = `Gold: ${gold}`;
+    if (tradesArray === tradeArray.sell) {
+      item.quantity += 1;
+      itemdiv.childNodes.item(1).max=item.quantity.toString();
+      itemdiv.style.display = "block";
+      itemdiv.childNodes.item(3).innerHTML = `<b>Hinta: </b>${item.sale_value*item.quantity}`;
+      itemdiv.childNodes.item(2).innerText=`/${item.quantity}`;
+    }
+    if (itemClone.quantity === 0) {
+      let index = tradesArray[inventoryType].indexOf(itemClone);
+      tradesArray[inventoryType].splice(index);
+      divClone.remove();
+    }
   }
-  if (itemClone.quantity===0){
-    let index=tradesArray[inventoryType].indexOf(itemClone);
-    tradesArray[inventoryType].splice(index);
-    divClone.remove();
-  }
+  console.log(tradeArray);
 }
 function addToTrade(
     button, item, itemdiv, itemContainer, tradesArray, inventoryType,
@@ -271,13 +315,6 @@ function removeFromTrade(
       tradeContainer.style.display = 'none';
     }
   };
-}
-async function unload(){
-  let deletable=document.getElementsByClassName('itemInfo');
-  for(let element of deletable){
-    element.remove();
-  }
-  shopCreated=false;
 }
 async function completeTrade(tradeType, itemType, inventory) {
   if (tradeArray[tradeType][itemType].length !== 0) {
