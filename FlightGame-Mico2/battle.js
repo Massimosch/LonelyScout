@@ -165,7 +165,7 @@ async function runFightRound() {
 
     battleModal.style.display = 'block';
     battleModalHeader.innerHTML = 'Vihollinen pysyi hengissä';
-    battleModalDesc.innerHTML = 'Hänellä on vielä voimaa ja hän hyökkää.';
+    battleModalDesc.innerHTML = `Hänellä on vielä voimaa ja hän hyökkää aiheuttaen ${battleState.enemy.damage} vahinkoa sinulle.`;
     btnModal.innerHTML = 'OK';
     btnModal.onclick = async function() {
 
@@ -178,7 +178,7 @@ async function runFightRound() {
       // modal 'sinä kuolit' to call save game
       battleModal.style.display = 'block';
       battleModalHeader.innerHTML = 'Sinä kuolit.';
-      battleModalDesc.innerHTML = `Sait ${battleState.playerState.score} pistettä. Voit aloittaa uuden pelin.`;
+      battleModalDesc.innerHTML = `Sait ${battleState.playerState.score} pistettä ja selvisit checkpointille ${battleState.playerState.current_checkpoint_id}. Voit aloittaa uuden pelin.`;
       btnModal.innerHTML = 'OK';
       btnModal.onclick = async function() {
         await save_data();
