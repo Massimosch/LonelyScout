@@ -72,129 +72,122 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-  if (liikuBtn) {
-    liikuBtn.addEventListener('click', async () => {
-    await save_game ();
-    window.location.href = `battle.html?username=${gameState.playerState.player}`;
-    })
-  }
-  if (takaisinBtn) {
-    takaisinBtn.addEventListener('click', () => {
-      window.location.href = 'menu.html';
-    });
-  }
+if (liikuBtn) {
+  liikuBtn.addEventListener('click', save_game );
+}
+if (takaisinBtn) {
+  takaisinBtn.addEventListener('click', () => {
+    window.location.href = 'menu.html';
+  });
+}
 
-  tallentaBtn.addEventListener('click', async () => {
-    await save_game ();
-    alert("Sinun peli on talennettu")
+
+tallentaBtn.addEventListener('click', () => {
+    //to call save_game function
   });
 
-  async function updateGameState(username) {
 
-    if (!username)
-      return;
+async function updateGameState(username) {
 
-    try {
-      const response = await fetch(
-          `http://localhost:8000/load_game/${username}`,
-          {method: 'GET'});
-      const res_data = await response.json();
-      gameState.playerState.player = username;
-      gameState.playerState.health = res_data.player_stats.health;
-      gameState.playerState.score = res_data.player_stats.score;
-      gameState.playerState.game_id = res_data.player_stats.id;
-      gameState.playerState.current_checkpoint_id = res_data.player_stats.current_checkpoint;
-      gameState.playerState.checkpoint_name = res_data.player_stats.checkpoint_name;
+  if (!username)
+    return;
 
-      health.innerHTML = `TERVEYS: ${res_data.player_stats.health}`;
-      score.innerHTML = `SCORE: ${res_data.player_stats.score}`;
-      checkpoint.innerHTML = `CHECKPOINT: ${res_data.player_stats.checkpoint_name}`;
-      locationName.innerHTML = `${res_data.player_stats.checkpoint_name}`;
-      locationImage.src = `images/${res_data.player_stats.checkpoint_name}.png`;
+  try {
+    const response = await fetch(
+        `http://localhost:8000/load_game/${username}`,
+        {method: 'GET'});
+    const res_data = await response.json();
+    gameState.playerState.player = username;
+    gameState.playerState.health = res_data.player_stats.health;
+    gameState.playerState.score = res_data.player_stats.score;
+    gameState.playerState.game_id = res_data.player_stats.id;
+    gameState.playerState.current_checkpoint_id = res_data.player_stats.current_checkpoint;
+    gameState.playerState.checkpoint_name = res_data.player_stats.checkpoint_name;
 
-<<<<<<< HEAD
     health.innerHTML = `TERVEYS: ${res_data.player_stats.health}`;
     score.innerHTML = `PISTEET: ${res_data.player_stats.score}`;
     checkpoint.innerHTML = `PAIKKA: ${res_data.player_stats.checkpoint_name}`;
     locationName.innerHTML = `${res_data.player_stats.checkpoint_name}`;
     locationImage.src = `images/${res_data.player_stats.checkpoint_name}.png`;
-=======
-      gameState.weapons = res_data.weapons
->>>>>>> nikita
 
-      if (gameState.weapons.length > 0) {
-        create_weapon_elements(gameState.weapons)
+    gameState.weapons=res_data.weapons
+
+    if (gameState.weapons.length>0) {
+      create_weapon_elements(gameState.weapons)
       }
 
-      if (res_data.consumables && res_data.consumables.length > 0) {
-        gameState.food = res_data.consumables;
-      }
 
-      current_consumables = gameState.food;
+    if (res_data.consumables && res_data.consumables.length > 0) {
+      gameState.food = res_data.consumables;
+    }
 
-      change_symbol_in_name(current_consumables, ' ', '-')
+    current_consumables=gameState.food;
 
-      for (let consumable of current_consumables) {
-        const item = consumables.querySelector(`#${consumable.name}`);
-        const item_quantity = item.querySelector('.quantity');
-        item_quantity.innerHTML = `${consumable.quantity}`;
-      }
-    } catch (e) {
-      console.log(e);
+    change_symbol_in_name(current_consumables,' ','-')
+
+    for (let consumable of current_consumables) {
+      const item = consumables.querySelector(`#${consumable.name}`);
+      const item_quantity = item.querySelector('.quantity');
+      item_quantity.innerHTML = `${consumable.quantity}`;
     }
   }
 
-  consumables_buttons.forEach(consumable_button => {
-    consumable_button.addEventListener('click', consumables_click);
-  });
+  catch (e) {
+    console.log(e);
+  }
+}
 
-  let isProcessing = false;
+consumables_buttons.forEach(consumable_button => {
+  consumable_button.addEventListener('click', consumables_click);
+});
 
-  async function consumables_click(event) {
-    await current_consumables;
-    await current_stats;
-    const button = event.currentTarget;
-    if (isProcessing) return;
-    isProcessing = true;
-    for (let item of current_consumables) {
-      if (item.name === button.id) {
-        if (item.quantity > 0) {
-          item.quantity -= 1;
-          const quantityElement = button.querySelector(
-              '.quantity');
-          quantityElement.textContent = item.quantity;
-          current_stats.health += item.heal_amount;
-          health.innerHTML = `TERVEYS: ${current_stats.health}`;
-        } else {
-          alert('You dont have this item');
-        }
+let isProcessing = false;
+
+async function consumables_click(event) {
+  await current_consumables;
+  await current_stats;
+  const button = event.currentTarget;
+  if (isProcessing) return;
+  isProcessing = true;
+  for (let item of current_consumables) {
+    if (item.name === button.id) {
+      if (item.quantity > 0) {
+        item.quantity -= 1;
+        const quantityElement = button.querySelector(
+            '.quantity');
+        quantityElement.textContent = item.quantity;
+        current_stats.health += item.heal_amount;
+        health.innerHTML = `TERVEYS: ${current_stats.health}`;
+      } else {
+        alert('You dont have this item');
       }
     }
-    isProcessing = false;
   }
+  isProcessing = false;
+}
 
-  function create_weapon_elements(weaponList) {
-    const emojiMap = {
-      'steel sword': '🗡️',
-      'bow': '🏹',
-      'slingshot': '🪀',
-      'magic staff': '🔮',
-    };
-    for (let weapon of weaponList) {
-      const weaponElement = document.createElement('div')
-      weaponElement.classList.add('item-container')
-      const weaponEmoji = document.createElement('span')
-      weaponEmoji.textContent = `${emojiMap[weapon.name]}`
-      const popup = document.createElement('div')
-      popup.classList.add('item-popup')
-      popup.textContent = `name:${weapon.name} | type:${weapon.type} | sale value:${weapon.sale_value} | damage:${weapon.damage} | current durability:${weapon.current_durability}`
-      weaponElement.appendChild(weaponEmoji)
-      weaponElement.appendChild(popup)
-      weapons.appendChild(weaponElement)
-    }
+function create_weapon_elements(weaponList){
+  const emojiMap = {
+  'steel sword': '🗡️',
+  'bow': '🏹',
+  'slingshot': '🪀',
+  'magic staff': '🔮',
+  };
+  for (let weapon of weaponList){
+    const weaponElement=document.createElement('div')
+    weaponElement.classList.add('item-container')
+    const weaponEmoji=document.createElement('span')
+    weaponEmoji.textContent=`${emojiMap[weapon.name]}`
+    const popup=document.createElement('div')
+    popup.classList.add('item-popup')
+    popup.textContent=`name:${weapon.name} | type:${weapon.type} | sale value:${weapon.sale_value} | damage:${weapon.damage} | current durability:${weapon.current_durability}`
+    weaponElement.appendChild(weaponEmoji)
+    weaponElement.appendChild(popup)
+    weapons.appendChild(weaponElement)
   }
+}
 
-  async function save_game() {
+async function save_game () {
     if (!gameState.playerState.player)
       return;
 
@@ -219,8 +212,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             body: JSON.stringify(data),
           });
       console.log('I am cheking player name', gameState.playerState.player)
+      window.location.href = `battle.html?username=${gameState.playerState.player}`;
     } catch (e) {
       console.log(e);
     }
   }
-
