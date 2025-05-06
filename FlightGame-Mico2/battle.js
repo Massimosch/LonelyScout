@@ -178,18 +178,20 @@ async function runFightRound() {
       // modal 'sinä kuolit' to call save game
       battleModal.style.display = 'block';
       battleModalHeader.innerHTML = 'Sinä kuolit.';
-      battleModalDesc.innerHTML = 'Voit aloittaa uuden pelin.';
+      battleModalDesc.innerHTML = `Sait ${battleState.playerState.score} pistettä. Voit aloittaa uuden pelin.`;
       btnModal.innerHTML = 'OK';
       btnModal.onclick = async function() {
+        await save_data();
         window.location.href = `menu.html`;
         battleModal.style.display = 'none';
       };
     }
   } else {
     // enemy dead -> some pop up like modal in the store 'you can do futher'
-    battleState.playerState.score += 125;
+    let pistePalkinto = 125
+    battleState.playerState.score += pistePalkinto;
     battleModal.style.display = 'block';
-    battleModalHeader.innerHTML = 'Vihollinen on voitettu!';
+    battleModalHeader.innerHTML = `Vihollinen on voitettu! Sait ${pistePalkinto} pistettä!`;
     battleModalDesc.innerHTML = 'Voit siirtyä eteenpäin.';
     btnModal.onclick = async function() {
       await save_data();

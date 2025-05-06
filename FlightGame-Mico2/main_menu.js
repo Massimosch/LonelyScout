@@ -5,14 +5,16 @@ const lataaButton = document.querySelector("#lataa");
 const tekijätButton = document.querySelector("#tekijät");
 const takaisinButton = document.querySelector("#takaisin")
 
-if (tekijätButton) 
-{
-    tekijätButton.addEventListener("click", () => { window.location.href = "tekijät.html" })
+if (tekijätButton) {
+    tekijätButton.addEventListener("click", () => {
+        document.getElementById('tekijatModal').style.display = 'flex';
+    });
 }
 
-if (takaisinButton)
-{
-    takaisinButton.addEventListener("click", () => { window.location.href = "menu.html" })
+if (takaisinButton) {
+    takaisinButton.addEventListener("click", () => {
+        document.getElementById('tekijatModal').style.display = 'none';
+    });
 }
 
 if (aloitaButton)
