@@ -75,9 +75,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 if (liikuBtn) {
   liikuBtn.addEventListener('click', save_game );
 }
+
 if (takaisinBtn) {
   takaisinBtn.addEventListener('click', () => {
-    window.location.href = 'menu.html';
+      window.location.href = 'menu.html';
   });
 }
 
