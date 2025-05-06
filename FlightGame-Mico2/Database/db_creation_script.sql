@@ -50,6 +50,7 @@ CREATE TABLE consumables (
 
 
 CREATE TABLE weapon_Inventory (
+    id INT PRIMARY KEY AUTO_INCREMENT,
     game_id INT,
     item_id INT,
     current_durability INT,
@@ -60,6 +61,7 @@ CREATE TABLE weapon_Inventory (
 CREATE TABLE consumable_Inventory (
     game_id INT,
     item_id INT,
+    quantity INT,
     FOREIGN KEY (game_id) REFERENCES game(id),
     FOREIGN KEY (item_id) REFERENCES consumables(id)
 );

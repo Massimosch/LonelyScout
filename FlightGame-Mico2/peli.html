@@ -13,33 +13,35 @@
     <div class="status-box">
       <h2>PELAAJAN TILANNE</h2>
       <p id="health">TERVEYS: ei mitään</p>
-      <p id="score">SCORE: ei mitään</p>
+      <p id="score">PISTEET: ei mitään</p>
       <p id="checkpoint">PAIKKA: ei mitään </p>
-      <p>ASEET (VALITTU ON KÄYTÖSSÄ):</p>
-      <select name="aseet" id="aseet">
-        <option value="Nyrkit">Nyrkit</option>
-        <option value="Miekka">Miekka</option>
-        <option value="Jousi">Jousi</option>
-      </select>
-      <div id="consumables">
-        <p>CONSUMABLES: </p>
-        <div id="nakki" class="consumable-container">
-          <span>🌭</span>
-          <span class="quantity">0</span>
-          <div class="consumable-popup">Sale value:2  Heal amount:5</div>
-        </div>
-        <div id="parantava-juoma" class="consumable-container">
-          <span>🧪</span>
-          <span class="quantity">0</span>
-          <div class="consumable-popup">Sale value:30  Heal amount:25</div>
-        </div>
-        <div id="piirakka" class="consumable-container">
-          <span>🥧</span>
-          <span class="quantity">0</span>
-          <div class="consumable-popup">Sale value:20  Heal amount:15</div>
+      <div id="weapons">
+        <p>ASEET:</p>
+        <div class="item-container">
+          <span>👊</span>
+          <div class="item-popup">name:fists | type:none |
+          sale value:none | damage:10 | current durability:none</div>
         </div>
       </div>
-        <img src="images/adventurer.png" alt="adventurer kuva">
+      <div id="consumables">
+        <p>RUOKA: </p>
+        <div id="nakki" class="item-container">
+          <span>🌭</span>
+          <span class="quantity">0</span>
+          <div class="item-popup">Sale value:2 | Heal amount:5</div>
+        </div>
+        <div id="parantava-juoma" class="item-container">
+          <span>🧪</span>
+          <span class="quantity">0</span>
+          <div class="item-popup">Sale value:30 | Heal amount:25</div>
+        </div>
+        <div id="piirakka" class="item-container">
+          <span>🥧</span>
+          <span class="quantity">0</span>
+          <div class="item-popup">Sale value:20 | Heal amount:15</div>
+        </div>
+      </div>
+        <img src="images/adventurechar.png" alt="adventurer kuva">
     </div>
     <div class="map-box">
       <h2 id="location_name"></h2>
@@ -47,11 +49,35 @@
     </div>
   </div>
   <div class="player-controls">
-    <button id="move">Liiku</button>
-    <button id="shop">Avaa kauppa</button>
-    <button id="help">Pelin ohjeet</button>
-    <button id="back_to_menu">Päävalikkoon</button>
+    <button id="move">LIIKU</button>
+    <button id="shop">AVAA KAUPPA</button>
+    <button id="help">OHJEET</button>
+    <button id="back_to_menu">PÄÄVALIKKO</button>
+    <button id="save_game">TALLENNA</button>
   </div>
+</div>
+
+<div id="helpModal" class="modal">
+  <div class="modal-content">
+
+    <h2>Pelin Ohjeet</h2>
+    <div class="instructions">
+      <p><strong>Tervetuloa LonelyScout-peliin!</strong></p>
+      <p>Tässä ovat pelin perusohjeet:</p>
+      <ul>
+        <li><strong>Liiku:</strong> Siirry seuraavaan sijaintiin ja kohtaa vihollisia. Kun päivität vihollisen saat pisteitä ja peli etenee.</li>
+        <li><strong>Aseet:</strong> Käytä aseita taisteluissa vihollisia vastaan. Oikealla asevalinnalla teet kaksinkertaista vahinkoa. Valittu ase on käytössä oleva aseesi.</li>
+        <li><strong>Ruoka:</strong> Käytä ruokaa parantaaksesi terveyttäsi. Ruoka toimii ainoastaan tappelun ulkopuolella klikkaamalla käytettävän ruoan kuvaa.</li>
+        <li><strong>Kauppa:</strong> Vieraile kaupassa ostaaaksesi uusia tavaroita.</li>
+        <li><strong>Tallenna:</strong> Tallenna pelin edistymisesi.</li>
+      </ul>
+      <p>Pelin tavoitteena on kerätä mahdollisimman paljon pisteitä selviytymällä eri sijainneissa. Jos vihollinen päihittää sinut, häviät pelin!</p>
+      <p><strong>Onnea matkaan!</strong></p>
+      <button class="close">Sulje ohjeet</button>
+    </div>
+    
+  </div>
+
 </div>
 </body>
 </html>

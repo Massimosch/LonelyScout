@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 //Käytäjän nimi haetaan globaaliin muuttujaan..
 const window_parameter = new URLSearchParams(window.location.search);
@@ -10,11 +10,15 @@ const checkpoint = document.querySelector('#checkpoint');
 const takaisinBtn = document.querySelector('#back_to_menu');
 const inventory = document.querySelector('#inventory');
 const consumables = document.querySelector('#consumables');
-const consumables_buttons = document.querySelectorAll('.consumable-container');
+const weapons=document.querySelector('#weapons');
+const consumables_buttons = consumables.querySelectorAll('.item-container');
 const locationName = document.querySelector('#location_name');
 const locationImage = document.querySelector('#location_image');
 const liikuBtn = document.querySelector('#move');
-let current_consumables, current_stats
+const tallentaBtn = document.querySelector('#save_game')
+const helpBtn = document.querySelector('#help');
+const modal = document.querySelector('#helpModal');
+const closeBtn = document.querySelector('.close');
 
 const gameState = {
   playerState:
@@ -23,43 +27,28 @@ const gameState = {
         game_id: 0,
         health: 100,
         score: 100,
-        current_checkpoint_id: 0,
+        checkpoint_name: '',
+        current_checkpoint_id: 1,
       },
-  food: [],
-  weapons: [
-    {
-      name: 'nyrkki',
-      damage: 10,
-      durability: Infinity,
-    },
-    {
-      name: 'steel sword',
-      type: 'sword',
-      saleValue: 250,
-      damage: 100,
-      durability: 10,
-    },
-    {
-      name: 'slingshot',
-      type: 'ranged',
-      saleValue: 100,
-      damage: 50,
-      durability: 10,
-    },
-    {
-      name: 'bow',
-      type: 'ranged',
-      saleValue: 150,
-      damage: 50,
-      durability: 10,
-    },
-    {
-      name: 'magic staff',
-      type: 'magic',
-      saleValue: 175,
-      damage: 60,
-      durability: 10,
-    },
+  food: [
+      {
+         item_id: 1,
+         name: 'parantava juoma',
+         heal_amount: 25,
+         quantity: 0
+      },
+      {
+         item_id: 2,
+         name: 'nakki',
+         heal_amount: 5,
+         quantity: 0,
+      },
+      {
+          item_id: 3,
+          name: 'piirakka',
+          heal_amount: 15,
+          quantity: 0
+      }
   ],
   enemy: {
     name: 'orc',
@@ -68,45 +57,58 @@ const gameState = {
     health: 50,
   },
 };
+let current_consumables=gameState.food;
+let current_stats = gameState.playerState;
 
-document.addEventListener('DOMContentLoaded', async() => {
+function change_symbol_in_name(dictionary,symbol1,symbol2) {
+   for (let item of dictionary){
+      item.name=item.name.replace(symbol1,symbol2)
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
 
   if (username) {
     await updateGameState(username);
   } else {
     alert('Username parametri puuttuu');
   }
-});
-
-
-if (liikuBtn) {
-  liikuBtn.addEventListener('click', async () => {
-    if (!gameState.playerState.player)
-      return;
-
-    try {
-      let data = {
-        current_checkpoint_id: gameState.playerState.current_checkpoint_id,
-        health: gameState.playerState.health,
-        score: gameState.playerState.score
-      }
-      
-      const request = await fetch(`http://localhost:8000/save_game/${gameState.playerState.game_id}`,
-          {method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(data)});
-
-    } catch (e) {
-      console.log(e);
-    }
   });
-}
 
-if (takaisinBtn) {
-  takaisinBtn.addEventListener('click', () => {
-    window.location.href = 'menu.html';
-  });
-}
+  if (helpBtn) {
+    helpBtn.addEventListener('click', () => {
+        modal.style.display = 'block';
+    });
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+  }
+
+
+  if (liikuBtn) {
+    liikuBtn.addEventListener('click', async () => {
+      await save_game();
+      window.location.href = `battle.html?username=${gameState.playerState.player}`;
+    })
+  }
+
+  if (takaisinBtn) {
+    takaisinBtn.addEventListener('click', () => {
+        window.location.href = 'menu.html';
+    });
+  }
+
+
+  if (tallentaBtn) {
+    tallentaBtn.addEventListener('click', async()=> {
+      await save_game()
+      alert ("Peli on talennettu")
+    })
+  }
+
 
 async function updateGameState(username) {
 
@@ -115,56 +117,59 @@ async function updateGameState(username) {
 
   try {
     const response = await fetch(
-        `http://localhost:8000/load_game/${username}`, 
+        `http://localhost:8000/load_game/${username}`,
         {method: 'GET'});
     const res_data = await response.json();
     gameState.playerState.player = username;
     gameState.playerState.health = res_data.player_stats.health;
     gameState.playerState.score = res_data.player_stats.score;
     gameState.playerState.game_id = res_data.player_stats.id;
-    gameState.playerState.current_checkpoint_id = res_data.player_stats.current_checkpoint_id;
+    gameState.playerState.current_checkpoint_id = res_data.player_stats.current_checkpoint;
+    gameState.playerState.checkpoint_name = res_data.player_stats.checkpoint_name;
 
     health.innerHTML = `TERVEYS: ${res_data.player_stats.health}`;
-    score.innerHTML = `SCORE: ${res_data.player_stats.score}`;
-    checkpoint.innerHTML = `CHECKPOINT: ${res_data.current_checkpoint_id.name}`;
-    locationName.innerHTML = `${res_data.current_checkpoint_id.name}`;
-    locationImage.src = `images/${res_data.current_checkpoint_id.name}.png`;
-    
+    score.innerHTML = `PISTEET: ${res_data.player_stats.score}`;
+    checkpoint.innerHTML = `PAIKKA: ${res_data.player_stats.checkpoint_name}`;
+    locationName.innerHTML = `${res_data.player_stats.checkpoint_name}`;
+    locationImage.src = `images/${res_data.player_stats.checkpoint_name}.png`;
 
-    let user_consumables;
-    if (!data.consumables || data.consumables.length === 0) {
-      user_consumables = [
-        {'name': 'nakki', 'heal_amount': 5, 'quantity': 0},
-        {'name': 'parantava-juoma', 'heal_amount': 25, 'quantity': 0},
-        {'name': 'piirakka', 'heal_amount': 15, 'quantity': 0},
-      ];
-    } else {
-      user_consumables = data.consumables;
+    gameState.weapons=res_data.weapons
+
+    if (gameState.weapons.length>0) {
+      create_weapon_elements(gameState.weapons)
+      }
+
+
+    if (res_data.consumables && res_data.consumables.length > 0) {
+      gameState.food = res_data.consumables;
     }
-    console.log(user_consumables);
-    current_consumables = user_consumables
-    
-for (let consumable of user_consumables) {
+
+    current_consumables=gameState.food;
+
+    change_symbol_in_name(current_consumables,' ','-')
+
+    for (let consumable of current_consumables) {
       const item = consumables.querySelector(`#${consumable.name}`);
       const item_quantity = item.querySelector('.quantity');
       item_quantity.innerHTML = `${consumable.quantity}`;
     }
   }
+
   catch (e) {
     console.log(e);
   }
 }
 
 consumables_buttons.forEach(consumable_button => {
-      consumable_button.addEventListener('click', consumables_click)
-})
+  consumable_button.addEventListener('click', consumables_click);
+});
 
 let isProcessing = false;
+
 async function consumables_click(event) {
-  await current_consumables
-  await current_stats
-  console.log(current_stats)
-  const button=event.currentTarget
+  await current_consumables;
+  await current_stats;
+  const button = event.currentTarget;
   if (isProcessing) return;
   isProcessing = true;
   for (let item of current_consumables) {
@@ -180,6 +185,57 @@ async function consumables_click(event) {
         alert('You dont have this item');
       }
     }
-    isProcessing = false;
+  }
+  isProcessing = false;
+}
+
+function create_weapon_elements(weaponList){
+  const emojiMap = {
+  'steel sword': '🗡️',
+  'bow': '🏹',
+  'slingshot': '🪀',
+  'magic staff': '🔮',
+  };
+  for (let weapon of weaponList){
+    const weaponElement=document.createElement('div')
+    weaponElement.classList.add('item-container')
+    const weaponEmoji=document.createElement('span')
+    weaponEmoji.textContent=`${emojiMap[weapon.name]}`
+    const popup=document.createElement('div')
+    popup.classList.add('item-popup')
+    popup.textContent=`name:${weapon.name} | type:${weapon.type} | sale value:${weapon.sale_value} | damage:${weapon.damage} | current durability:${weapon.current_durability}`
+    weaponElement.appendChild(weaponEmoji)
+    weaponElement.appendChild(popup)
+    weapons.appendChild(weaponElement)
   }
 }
+
+async function save_game () {
+    if (!gameState.playerState.player)
+      return;
+
+    try {
+      let data = {
+        player_stats:
+            {
+              player: gameState.playerState.player,
+              current_checkpoint_id: gameState.playerState.current_checkpoint_id,
+              health: gameState.playerState.health,
+              score: gameState.playerState.score,
+            },
+        consumables: gameState.food,
+        weapons: gameState.weapons || []
+      };
+
+      const request = await fetch(
+          `http://localhost:8000/save_game/${gameState.playerState.game_id}`,
+          {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data),
+          });
+      console.log('I am cheking player name', gameState.playerState.player)
+    } catch (e) {
+      console.log(e);
+    }
+  }

@@ -34,7 +34,12 @@ body {
     border-radius: 1em;
 }
 
+
 .status-box img {
+    display: block;
+    transform: rotateY(180deg);
+    margin-top: 2.5rem;
+    padding-right: 5rem;
     width: 10rem;
     height: 10rem;
 }
@@ -42,4 +47,61 @@ body {
 .battle-box img {
     width: 40rem;
     height: 25rem;
+}
+
+#enemy_name {
+    text-align: center;
+}
+
+.modal {
+    display: none;
+    flex-wrap: wrap;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.modal-content {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10% auto;
+    background-color: burlywood;
+    padding: 1rem;
+    border: 2px solid black;
+    border-radius: 1em;
+    width: 50%;
+    text-align: center;
+}
+
+.modal-content > h2 {
+    width: 100%;
+    text-align: center;
+}
+
+.modal-content > p {
+    width: 100%;
+    text-align: center;
+}
+
+.modal-content > div {
+    width: 100%;
+    text-align: center;
+}
+
+button {
+    background-image: url('images/selection_img.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    width: 5rem;
+    height: 2.2rem;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+button:hover {
+    transform: scale(1.1);
 }
