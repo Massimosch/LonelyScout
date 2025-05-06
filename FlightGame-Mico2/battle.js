@@ -191,7 +191,7 @@ async function runFightRound() {
     let pistePalkinto = 125
     battleState.playerState.score += pistePalkinto;
     battleModal.style.display = 'block';
-    battleModalHeader.innerHTML = `Vihollinen on voitettu! Sait ${pistePalkinto} pistettä!`;
+    get_joke().then(joke=>{battleModalHeader.innerHTML = `Vihollinen on voitettu! Sait ${pistePalkinto} pistettä!<br><br>Vitsi: ${joke}`});
     battleModalDesc.innerHTML = 'Voit siirtyä eteenpäin.';
     btnModal.onclick = async function() {
       await save_data();
@@ -227,3 +227,13 @@ async function save_data() {
     console.log(e);
   }
 }
+
+async function get_joke () {
+  const response=await fetch ('https://v2.jokeapi.dev/joke/Any?type=single')
+  const data=await response.json()
+  const joke=data.joke
+  return joke
+}
+
+
+
