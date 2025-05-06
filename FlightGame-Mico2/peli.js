@@ -20,6 +20,17 @@ const helpBtn = document.querySelector('#help');
 const modal = document.querySelector('#helpModal');
 const closeBtn = document.querySelector('.close');
 
+const infoEmoji=document.createElement('span')
+infoEmoji.classList.add('item-container')
+infoEmoji.textContent='📘'
+const infoPopup=document.createElement('span')
+infoPopup.classList.add('item-popup')
+infoEmoji.appendChild(infoPopup)
+
+
+
+
+
 const gameState = {
   playerState:
       {
@@ -133,6 +144,9 @@ async function updateGameState(username) {
     locationName.innerHTML = `${res_data.player_stats.checkpoint_name}`;
     locationImage.src = `images/${res_data.player_stats.checkpoint_name}.png`;
 
+    infoPopup.textContent=await fact_about_score(gameState.playerState.score)
+    score.appendChild(infoEmoji)
+
     gameState.weapons=res_data.weapons
 
     if (gameState.weapons.length>0) {
@@ -239,3 +253,12 @@ async function save_game () {
       console.log(e);
     }
   }
+
+
+async function fact_about_score(score){
+    const response=await fetch (`http://numbersapi.com/${score}/year?default=Your+score+is+too+high+or+too+low+to+get+facts`)
+    const fact=await response.text()
+    return fact
+}
+
+
