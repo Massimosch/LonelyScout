@@ -124,7 +124,7 @@ async function updateGameState(username) {
 
 function updateBattleView() {
   health.innerHTML = `TERVEYS: ${battleState.playerState.health}`;
-  score.innerHTML = `SCORE: ${battleState.playerState.score}`;
+  score.innerHTML = `PISTEET: ${battleState.playerState.score}`;
   enemy_name.innerHTML = `Sinun vihollinen on ${battleState.enemy.name}`;
   enemy_weakness.innerHTML = `HAAVOITTUVUUS: ${battleState.enemy.weakness}`;
   enemy_damage.innerHTML = `ISKUVARIO: ${battleState.enemy.damage}`;

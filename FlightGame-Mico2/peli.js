@@ -105,8 +105,8 @@ async function updateGameState(username) {
     gameState.playerState.checkpoint_name = res_data.player_stats.checkpoint_name;
 
     health.innerHTML = `TERVEYS: ${res_data.player_stats.health}`;
-    score.innerHTML = `SCORE: ${res_data.player_stats.score}`;
-    checkpoint.innerHTML = `CHECKPOINT: ${res_data.player_stats.checkpoint_name}`;
+    score.innerHTML = `PISTEET: ${res_data.player_stats.score}`;
+    checkpoint.innerHTML = `PAIKKA: ${res_data.player_stats.checkpoint_name}`;
     locationName.innerHTML = `${res_data.player_stats.checkpoint_name}`;
     locationImage.src = `images/${res_data.player_stats.checkpoint_name}.png`;
 
