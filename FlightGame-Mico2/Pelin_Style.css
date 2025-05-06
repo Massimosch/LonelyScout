@@ -31,12 +31,38 @@
     width: 20rem;
 }
 
+#score{
+   display: flex;
+   align-items: center;
+}
+
+#score>span {
+   display: inline-flex;
+   align-items: center;
+   vertical-align: middle;
+   height: 1em;
+}
+
+#score>span>span {
+    white-space: normal;
+    word-wrap: break-word;
+    width: max-content;
+    max-width:70rem;
+}
+
+#score>span:active{
+    transform:none;
+}
+
 #weapons {
     display:flex;
     align-items: center;
     flex-wrap: wrap;
     gap:1rem;
     row-gap: 0;
+}
+#weapons>div{
+   transform:none;
 }
 
 .status-box #consumables {

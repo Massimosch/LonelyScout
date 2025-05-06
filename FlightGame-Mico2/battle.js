@@ -229,7 +229,7 @@ async function save_data() {
 }
 
 async function get_joke () {
-  const response=await fetch ('https://v2.jokeapi.dev/joke/Programming?type=single')
+  const response=await fetch ('https://v2.jokeapi.dev/joke/Programming?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single')
   const data=await response.json()
   const joke=data.joke
   return joke
