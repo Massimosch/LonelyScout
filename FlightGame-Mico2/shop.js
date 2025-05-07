@@ -32,8 +32,7 @@ window.onclick = function(event) {
     if (trading) {
       return;
     }
-    updateGameState(username);
-    shopModal.style.display = 'none';
+    location.reload();
   }
 };
 shopButt.onclick = function() {
@@ -43,19 +42,9 @@ shopButt.onclick = function() {
   shopModal.style.display = 'flex';
 };
 
-function createShop() {
-  shopCreated = true;
-  createInventoryInfo(shopInventory, 'weapons', shopWeaponContainer);
-  createInventoryInfo(shopInventory, 'consumables', shopConsumableContainer);
-  createInventoryInfo(playerInventory, 'weapons', playerWeaponContainer);
-  createInventoryInfo(playerInventory, 'consumables',
-      playerConsumableContainer);
-  goldText.innerText = `Score: ${gold}`;
-}
-
 function createInventoryInfo(inventory, inventoryType, itemContainer) {
   for (let item of inventory[inventoryType]) {
-    if (inventoryType === 'consumables' && item.quantity === 0) {
+    if (inventoryType === 'consumables' && item.quantity === 0 || inventoryType==='weapons' && item.current_durability===0) {
       return;
     }
     let itemInfoParagraph = document.createElement('p');
@@ -93,11 +82,25 @@ function createInventoryInfo(inventory, inventoryType, itemContainer) {
     itemDiv.appendChild(itemInfoParagraph);
     itemContainer.appendChild(itemDiv);
     if (inventoryType === 'weapons') {
-      addToTrade(itemButton, item, itemDiv, itemContainer,
-          ((inventory === shopInventory) ? tradeArray.buy : tradeArray.sell),
-          inventoryType,
-          ((inventory === shopInventory) ? tradeBuying : tradeSelling),
-          ((inventory === shopInventory) ? item.sale_value : -item.sale_value));
+      if(inventory===shopInventory){
+        itemButton.onclick = function() {
+        addToTrade(itemButton, item, itemDiv, itemContainer,
+            tradeArray.buy,
+            inventoryType,
+            tradeBuying,
+            item.sale_value);
+      };
+      }
+        else if(inventory===playerInventory){
+        itemButton.onclick = function() {
+        addToTrade(itemButton, item, itemDiv, itemContainer,
+            tradeArray.sell,
+            inventoryType,
+            tradeSelling,
+            -item.sale_value);
+      };
+      }
+
     }
     if (inventoryType === 'consumables') {
       let itemClone = structuredClone(item);
@@ -118,7 +121,7 @@ function createInventoryInfo(inventory, inventoryType, itemContainer) {
 function addToTradeConsumable(
     button, item, itemdiv, itemContainer, tradesArray, inventoryType,
     tradeContainer, sale_value, itemClone, elementClone) {
-  if (adding) {
+  if (adding||trading) {
     return;
   }
   adding = true;
@@ -148,7 +151,9 @@ function addToTradeConsumable(
     if (tradeContainer === tradeSelling) {
       item.quantity -= quantityValue;
       quantityP.style.display = 'block';
-
+      if (item.quantity === 0) {
+        itemdiv.style.display = 'none';
+      }
     }
     tradeContainer.appendChild(elementClone);
     button = elementClone.childNodes.item(0);
@@ -217,10 +222,14 @@ function removeFromTradeCons(
 function addToTrade(
     button, item, itemdiv, itemContainer, tradesArray, inventoryType,
     tradeContainer, sale_value) {
-  button.onclick = function() {
     if (tradesArray === tradeArray.buy) {
       itemdiv = itemdiv.cloneNode(true);
       button = itemdiv.childNodes.item(0);
+          for (let weapon of tradesArray[inventoryType]){
+      if (item.name===weapon.name){
+        return;
+      }
+    }
     }
     button.innerText = 'Poista';
     console.log(tradeWindow);
@@ -230,15 +239,14 @@ function addToTrade(
     tradesArray[inventoryType].push(item);
     goldText.innerText = `Score: ${gold}`;
     tradeContainer.style.display = 'Block';
+    button.onclick = function() {
     removeFromTrade(button, item, itemdiv, itemContainer, tradesArray,
-        inventoryType, tradeContainer, sale_value);
-  };
+        inventoryType, tradeContainer, sale_value);};
 }
 
 function removeFromTrade(
     button, item, itemdiv, itemContainer, tradesArray, inventoryType,
     tradeContainer, sale_value) {
-  button.onclick = function() {
     button.innerText = 'Siirrä koriin';
     let ind = tradesArray[inventoryType].indexOf(item);
     gold += sale_value;
@@ -249,15 +257,15 @@ function removeFromTrade(
       itemdiv.remove();
     } else {
       itemContainer.appendChild(itemdiv);
+      button.onclick=function() {
       addToTrade(button, item, itemdiv, itemContainer, tradesArray,
           inventoryType,
-          tradeContainer, sale_value);
+          tradeContainer, sale_value);};
     }
     if (tradesArray['weapons'].length === 0 &&
         tradesArray['consumables'].length === 0) {
       tradeContainer.style.display = 'none';
     }
-  };
 }
 
 async function updateShop() {
@@ -272,10 +280,10 @@ async function updateShop() {
         shopInventory.consumables.push(item);
       }
       for (let item of res_data[0]) {
+        item.current_durability=item.durability;
         shopInventory.weapons.push(item);
       }
       console.log(playerInventory);
-
     }
     gold = structuredClone(gameState.playerState.score);
     change_symbol_in_name(shopInventory.consumables, ' ', '-');
@@ -286,13 +294,19 @@ async function updateShop() {
     console.log(gameState);
     console.log(shopInventory);
     console.log(playerInventory);
-    createShop();
+    shopCreated = true;
+    createInventoryInfo(shopInventory, 'weapons', shopWeaponContainer);
+    createInventoryInfo(shopInventory, 'consumables', shopConsumableContainer);
+    createInventoryInfo(playerInventory, 'weapons', playerWeaponContainer);
+    createInventoryInfo(playerInventory, 'consumables',
+      playerConsumableContainer);
+    goldText.innerText = `Score: ${gold}`;
   } catch (e) {
     console.log(e);
   }
 }
 
-function deleteShop() {
+async function deleteShop() {
   tradeSelling.classList.add('delete');
   tradeBuying.classList.add('delete');
   let containers = document.querySelectorAll('.delete');
@@ -302,18 +316,27 @@ function deleteShop() {
   console.log(containers);
 }
 
-function completeTrade() {
-  deleteShop();
+async function completeTrade() {
   for (let weapon of tradeArray.buy.weapons) {
-    weapon.current_durability = weapon.durability;
-    playerInventory.weapons.push(weapon);
-  }
-  for (let consumable of playerInventory.consumables) {
-    for (let consS of tradeArray.sell.consumables) {
-      if (consumable.name === consS.name) {
-        consumable.quantity -= consS.quantity;
+    for (let shopWeapon of shopInventory.weapons){
+      if (weapon.name===shopWeapon.name){
+        weapon.item_id=shopWeapon.id;
       }
     }
+    delete weapon.id;
+    playerInventory.weapons.push(weapon);
+  }
+  console.log(tradeArray.sell);
+  for (let weapon of tradeArray.sell.weapons) {
+    for (let playerWeapon of playerInventory.weapons){
+      if (weapon.id===playerWeapon.id){
+        playerWeapon.current_durability=0;
+        console.log("asdf")
+        break;
+      }
+    }
+  }
+  for (let consumable of playerInventory.consumables) {
     for (let conB of tradeArray.buy.consumables) {
       if (consumable.name === conB.name) {
         consumable.quantity += conB.quantity;
@@ -326,20 +349,19 @@ function completeTrade() {
   gameState.food = playerInventory.consumables;
   gameState.weapons = playerInventory.weapons;
   gameState.playerState.score = gold;
-  tradeArray.buy.weapons = [];
-  tradeArray.sell.weapons = [];
-  tradeArray.sell.consumables = [];
-  tradeArray.buy.consumables = [];
-  create_weapon_elements(gameState.weapons);
-  updateShop().catch();
+  tradeArray={sell:{weapons: [],consumables: []},buy:{weapons:[],consumables: []}};
+  console.log(tradeArray);
 }
 
-tradeButt.onclick = function() {
-  if (gold <= 0) {
+tradeButt.onclick = async function() {
+/*  if (gold <= 0) {
     alert('not enough gold');
     return;
-  }
-  completeTrade();
-  save_game(username).catch();
+  }*/
+  await completeTrade();
+  await deleteShop();
+  await save_game(username);
+  await updateShop();
+  location.reload();
 };
 
