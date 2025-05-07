@@ -65,5 +65,10 @@ def get_best_scores():
     result = lonely_scout_backend_functions.get_best_scores()
     return result
 
+@app.route('/get_shop_items')
+def get_shop_items():
+    result = lonely_scout_backend_functions.get_shop_items()
+    return result
+
 if __name__ == '__main__':
     app.run(port=8000, debug=True)

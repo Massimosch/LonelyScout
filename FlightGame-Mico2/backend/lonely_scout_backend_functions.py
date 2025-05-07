@@ -91,7 +91,7 @@ def get_checkpoints():
     return checkpoints
 
 def get_consumables(game_id): #funktio, joka tekee consumables listan
-    q=f"""Select item_id, name, heal_amount, quantity 
+    q=f"""Select item_id, name, heal_amount, quantity, sale_value
           from  consumable_Inventory inner join consumables on consumable_Inventory.item_id=consumables.id
           WHERE consumable_Inventory.game_id={game_id}"""
     consumables=exequte_this_query(q)
@@ -108,3 +108,10 @@ def get_best_scores():
     q = f"SELECT player_name, score FROM game WHERE is_ended=1 ORDER BY score DESC LIMIT 10"
     result = exequte_this_query(q)
     return result
+
+def get_shop_items():
+    q = f"SELECT * FROM weapons;"
+    weps= exequte_this_query(q)
+    q = f"SELECT * FROM consumables;"
+    cons= exequte_this_query(q)
+    return [weps,cons]

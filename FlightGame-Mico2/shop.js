@@ -1,98 +1,47 @@
 ﻿'use strict';
 //Shop things
+
 let shopInventory = {
-  weapons: [
-    {
-      name: 'a1',
-      type: 'kakka',
-      sale_value: 140,
-      damage: '10',
-      durability: '100',
-    },
-    {
-      name: 'a2',
-      type: 'kakka',
-      sale_value: 140,
-      damage: '10',
-      durability: '100',
-    },
-    {
-      name: 'a3',
-      type: 'kakka',
-      sale_value: 140,
-      damage: '10',
-      durability: '100',
-    }], consumables: [
-    {
-      name: 'apple',
-      sale_value: 10,
-      heal_amount: '20',
-      quantity: 1,
-    }, {name: 'nakki', sale_value: 10, heal_amount: '20', quantity: 1}],
+  weapons: [], consumables: [],
 };
-const shopModal = document.getElementById('shopModal');
-const shopButt = document.getElementById('shopButton');
-const shopBox = document.getElementById('shopInventory');
-
+let shopModal = document.querySelector('#shopModal');
+let shopButt = document.querySelector('#shopButton');
+let shopBox = document.querySelector('#shopInventory');
 //Player things
-let playerInventory = {
-  weapons: [
-    {
-      name: 'a1',
-      type: 'kakka',
-      sale_value: 140,
-      damage: '10',
-      durability: '100',
-    },
-    {
-      name: 'a2',
-      type: 'kakka',
-      sale_value: 140,
-      damage: '10',
-      durability: '100',
-    },
-    {
-      name: 'a3',
-      type: 'kakka',
-      sale_value: 140,
-      damage: '10',
-      durability: '100',
-    }],
-  consumables: [
-    {
-      name: 'apple',
-      sale_value: 10,
-      heal_amount: '20',
-      quantity: 5,
-    }, {name: 'nakki', sale_value: 10, heal_amount: '20', quantity: 5}],
-};
-const playerBox = document.getElementById('playerInventory');
+let playerInventory = {consumables:[],weapons:[]};
+let playerBox = document.querySelector('#playerInventory');
 let gold = 100;
-const goldText = document.getElementById('goldText');
-
+let goldText = document.querySelector('#goldText');
 //Trade things
 let tradeArray = {
   sell: {weapons: [], consumables: []},
   buy: {weapons: [], consumables: []},
 };
-const tradeWindow = document.getElementById('tradeWindow');
-let tradeBuying = document.getElementById('buying');
-const tradeSelling = document.getElementById('selling');
-const tradeButt = document.getElementById('tradeButton');
+let tradeWindow = document.querySelector('#tradeWindow');
+let tradeBuying = document.querySelector('#buying');
+let tradeSelling = document.querySelector('#selling');
+let tradeButt = document.querySelector('#tradeButton');
+let shopWeaponContainer=document.querySelector('#shopWeapons');
+let shopConsumableContainer=document.querySelector('#shopConsumables');
+let playerWeaponContainer=document.querySelector('#playerWeapons');
+let playerConsumableContainer=document.querySelector('#playerConsumables');
 let shopCreated = false;
 let trading = false;
+let adding=false;
 //Modal opening and closing
 window.onclick = function(event) {
   if (event.target === shopModal) {
     if (trading) {
       return;
     }
+    updateGameState(username);
     shopModal.style.display = 'none';
+    create_weapon_elements(gameState.weapons);
   }
 };
 shopButt.onclick = function() {
   if (!shopCreated) {
-    createShop();
+    let prom=updateShop();
   }
   shopModal.style.display = 'flex';
 };
@@ -100,9 +49,11 @@ shopButt.onclick = function() {
 //Create shop elements
 function createShop() {
   shopCreated = true;
-  inventoryPrinter(shopInventory, shopBox);
-  inventoryPrinter(playerInventory, playerBox);
-  goldText.innerText = `Gold: ${gold}`;
+  createInventoryInfo(shopInventory,'weapons', shopWeaponContainer);
+  createInventoryInfo(shopInventory,'consumables', shopConsumableContainer);
+  createInventoryInfo(playerInventory,'weapons', playerWeaponContainer);
+  createInventoryInfo(playerInventory,'consumables', playerConsumableContainer);
+  goldText.innerText = `Score: ${gold}`;
 }
 
 //Creates containers, text and buttons for items
@@ -111,6 +62,8 @@ function inventoryPrinter(inventory, box) {
   let consumableContainer = document.createElement('div');
   let weaponContainerHeader = document.createElement('h2');
   let consumableContainerHeader = document.createElement('h2');
+  weaponContainer.classList.add('delete');
+  consumableContainer.classList.add('delete');
   weaponContainerHeader.classList.add('shoph');
   consumableContainerHeader.classList.add('shoph');
   weaponContainerHeader.innerText = 'Aseet';
@@ -124,6 +77,7 @@ function inventoryPrinter(inventory, box) {
 }
 function createInventoryInfo(inventory, inventoryType, itemContainer) {
   for (let item of inventory[inventoryType]) {
+    if (inventoryType==='consumables' && item.quantity===0){return;}
     let itemInfoParagraph = document.createElement('p');
     let itemDiv = document.createElement('div');
     let itemButton = document.createElement('button');
@@ -140,7 +94,7 @@ function createInventoryInfo(inventory, inventoryType, itemContainer) {
       quantityInput.id="quantityInput";
       quantityLabel.htmlFor='quantityInput';
       quantityInput.type="number";
-      quantityInput.max= item.quantity.toString();
+      quantityInput.max= "100";
       quantityInput.min="1";
       quantityInput.defaultValue="1";
       itemInfoParagraph.innerHTML = `<b>${item.name}</b><br><br><b> Parannusvoima: </b> ${item.heal_amount}<b><br>Yhden hinta: </b> ${item.sale_value}`;
@@ -148,7 +102,9 @@ function createInventoryInfo(inventory, inventoryType, itemContainer) {
       quantityP.innerHTML=`<b>Hinta: </b>${item.sale_value*item.quantity}`;
       if (inventory===shopInventory){
         quantityP.style.display="none";
-        quantityInput.max="100";
+      }
+      else {
+        quantityInput.max=item.quantity;
       }
       quantityLabel.innerText=`/${quantityInput.max}`
       itemDiv.appendChild(quantityInput);
@@ -190,6 +146,8 @@ function createInventoryInfo(inventory, inventoryType, itemContainer) {
 function addToTradeConsumable(
     button, item, itemdiv, itemContainer, tradesArray, inventoryType,
     tradeContainer, sale_value,itemClone,elementClone) {
+    if(adding){return;}
+    adding=true;
     let quantityInput=itemdiv.childNodes.item(1);
     let quantityInputClone= elementClone.childNodes.item(1);
     let quantityValue=parseInt(quantityInput.value);
@@ -238,12 +196,14 @@ function addToTradeConsumable(
       console.log(tradeWindow);
       console.log(tradeContainer);
       gold -= sale_value;
-      goldText.innerText = `Gold: ${gold}`;
-
+      goldText.innerText = `Score: ${gold}`;
       tradeContainer.style.display = 'Block';
     }
+    adding=false
 }
 function removeFromTradeCons(itemdiv,divClone,item,itemClone,tradesArray,inventoryType,sale_value){
+  if (adding) {return;}
+  adding=true;
   let quantityInput=divClone.childNodes.item(1);
   let quantityValue=parseInt(quantityInput.value);
   let quantityMax= parseInt(quantityInput.max);
@@ -255,7 +215,7 @@ function removeFromTradeCons(itemdiv,divClone,item,itemClone,tradesArray,invento
     quantityInput.max=itemClone.quantity.toString();
     divClone.childNodes.item(2).innerText=`/${itemClone.quantity}`;
     gold += sale_value;
-    goldText.innerText = `Gold: ${gold}`;
+    goldText.innerText = `Score: ${gold}`;
     if (tradesArray === tradeArray.sell) {
       item.quantity += 1;
       itemdiv.childNodes.item(1).max=item.quantity.toString();
@@ -269,6 +229,7 @@ function removeFromTradeCons(itemdiv,divClone,item,itemClone,tradesArray,invento
       divClone.remove();
     }
   }
+  adding=false;
   console.log(tradeArray);
 }
 function addToTrade(
@@ -285,7 +246,7 @@ function addToTrade(
     tradeContainer.appendChild(itemdiv);
     gold -= sale_value;
     tradesArray[inventoryType].push(item);
-    goldText.innerText = `Gold: ${gold}`;
+    goldText.innerText = `Score: ${gold}`;
     tradeContainer.style.display = 'Block';
     removeFromTrade(button, item, itemdiv, itemContainer, tradesArray,
         inventoryType, tradeContainer, sale_value);
@@ -300,7 +261,7 @@ function removeFromTrade(
     let ind = tradesArray[inventoryType].indexOf(item);
     gold += sale_value;
     tradesArray[inventoryType].splice(ind, 1);
-    goldText.innerText = `Gold: ${gold}`;
+    goldText.innerText = `Score: ${gold}`;
     if (tradesArray === tradeArray.buy) {
       tradeContainer.removeChild(itemdiv);
       itemdiv.remove();
@@ -316,10 +277,79 @@ function removeFromTrade(
     }
   };
 }
-async function completeTrade(tradeType, itemType, inventory) {
-  if (tradeArray[tradeType][itemType].length !== 0) {
-    for (let item of tradeArray[tradeType][itemType]) {
-      //add/remove item to/from db inventory
+async function updateShop() {
+  try {
+    if (!shopCreated) {
+      const response = await fetch(
+          `http://localhost:8000/get_shop_items`,
+          {method: 'GET'});
+      const res_data = await response.json();
+      for (let item of res_data[1]) {
+        item.quantity=1;
+        shopInventory.consumables.push(item);
+      }
+      for (let item of res_data[0]) {
+        shopInventory.weapons.push(item);
+      }
+      console.log(playerInventory);
+
     }
+    change_symbol_in_name(shopInventory.consumables," ","-");
+    playerInventory={weapons: structuredClone(gameState.weapons),consumables: structuredClone(gameState.food)};
+    console.log(gameState);
+    console.log(shopInventory);
+    console.log(playerInventory);
+    createShop();
+  }
+  catch (e) {
+    console.log(e);
   }
 }
+function deleteShop(){
+  tradeSelling.classList.add('delete');
+  tradeBuying.classList.add('delete');
+  let containers=document.querySelectorAll('.delete');
+  for(let container of containers){
+    container.innerHTML="";
+  }
+  console.log(containers);
+}
+function completeTrade(){
+  deleteShop();
+  if(gold<0){
+    alert("not enough gold");
+    return;
+  }
+  for (let weapon of tradeArray.buy.weapons){
+    weapon.current_durability=weapon.durability;
+    playerInventory.weapons.push(weapon);
+  }
+      for (let consumable of playerInventory.consumables){
+      for (let consS of tradeArray.sell.consumables){
+        if (consumable.name===consS.name){
+          consumable.quantity-=consS.quantity;
+        }
+      }
+      for (let conB of tradeArray.buy.consumables){
+        if(consumable.name===conB.name){
+          consumable.quantity+=conB.quantity;
+        }
+      }
+      if (consumable.quantity<0){consumable.quantity=0;}
+    }
+  gameState.food=playerInventory.consumables;
+  gameState.weapons=playerInventory.weapons;
+  tradeArray.buy.weapons=[];
+  tradeArray.sell.weapons=[];
+  tradeArray.sell.consumables=[];
+  tradeArray.buy.consumables=[];
+  updateShop().catch();
+}
+tradeButt.onclick=function() {
+  console.log(playerInventory);
+  completeTrade();
+  save_game(username).catch();
+  console.log(gameState);
+
+}
+

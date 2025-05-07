@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <title>LonelyScout Game</title>
   <link rel="stylesheet" href="Pelin_Style.css">
+  <link rel="stylesheet" href="Shop_Style.css">
   <script src="peli.js" defer></script>
+  <script src="shop.js" defer></script>
 </head>
 <body>
 
@@ -50,13 +52,46 @@
   </div>
   <div class="player-controls">
     <button id="move">LIIKU</button>
-    <button id="shop">AVAA KAUPPA</button>
+    <button id="shopButton">AVAA KAUPPA</button>
     <button id="help">OHJEET</button>
     <button id="back_to_menu">PÄÄVALIKKO</button>
     <button id="save_game">TALLENNA</button>
   </div>
 </div>
-
+<div class="shopModal" id="shopModal">
+    <div class="container" id="shopContainer">
+        <span class="close">&times;</span>
+        <div class="item" id="shopInventory">
+            <h1 class="shoph">Kaupan tavarat</h1>
+            <h2 class="shoph">Aseet:</h2>
+            <div id="shopWeapons" class="delete">
+            </div>
+            <h2 class="shoph">Käyttötavarat:</h2>
+            <div id="shopConsumables" class="delete">
+            </div>
+        </div>
+        <div class="item" id="tradeWindow">
+            <h1 class="shoph">Ostoskori</h1>
+            <p id="goldText"></p>
+            <h2 id="buyingText" class="shoph">Ostettavat</h2>
+            <div id="buying" class="buysell">
+            </div>
+            <h2 id="sellingText" class="shoph">Myytävät</h2>
+            <div id="selling" class="buysell">
+            </div>
+            <button class="button-group" id="tradeButton">Trade</button>
+        </div>
+        <div class="item" id="playerInventory">
+            <h1 class="shoph">Pelaajan tavarat</h1>
+            <h2 class="shoph">Aseet:</h2>
+            <div id="playerWeapons" class="delete">
+            </div>
+            <h2 class="shoph">Käyttötavarat:</h2>
+            <div id="playerConsumables" class="delete">
+            </div>
+        </div>
+    </div>
+</div>
 <div id="helpModal" class="modal">
   <div class="modal-content">
 

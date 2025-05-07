@@ -46,19 +46,22 @@ const gameState = {
          item_id: 1,
          name: 'parantava juoma',
          heal_amount: 25,
-         quantity: 0
+         quantity: 0,
+         sale_value: 30
       },
       {
          item_id: 2,
          name: 'nakki',
          heal_amount: 5,
          quantity: 0,
+        sale_value: 2
       },
       {
           item_id: 3,
           name: 'piirakka',
           heal_amount: 15,
-          quantity: 0
+          quantity: 0,
+        sale_value: 20
       }
   ],
   enemy: {
@@ -253,12 +256,8 @@ async function save_game () {
       console.log(e);
     }
   }
-
-
 async function fact_about_score(score){
     const response=await fetch (`http://numbersapi.com/${score}/year?default=Your+score+is+too+high+or+too+low+to+get+facts`)
     const fact=await response.text()
     return fact
 }
-
-
