@@ -174,7 +174,7 @@ function addToTradeConsumable(
   elementClone.childNodes.item(2).innerText = `/${quantityInputClone.max}`;
   console.log(tradeWindow);
   console.log(tradeContainer);
-  gold -= sale_value;
+  gold -= sale_value*quantityValue;
   goldText.innerText = `Score: ${gold}`;
   tradeContainer.style.display = 'Block';
 
@@ -200,7 +200,7 @@ function removeFromTradeCons(
   itemClone.quantity}`;
   quantityInput.max = itemClone.quantity.toString();
   divClone.childNodes.item(2).innerText = `/${itemClone.quantity}`;
-  gold += sale_value;
+  gold += sale_value*quantityValue;
   goldText.innerText = `Score: ${gold}`;
   if (tradesArray === tradeArray.sell) {
     item.quantity += quantityValue;
@@ -306,16 +306,6 @@ async function updateShop() {
   }
 }
 
-async function deleteShop() {
-  tradeSelling.classList.add('delete');
-  tradeBuying.classList.add('delete');
-  let containers = document.querySelectorAll('.delete');
-  for (let container of containers) {
-    container.innerHTML = '';
-  }
-  console.log(containers);
-}
-
 async function completeTrade() {
   for (let weapon of tradeArray.buy.weapons) {
     for (let shopWeapon of shopInventory.weapons){
@@ -354,14 +344,12 @@ async function completeTrade() {
 }
 
 tradeButt.onclick = async function() {
-/*  if (gold <= 0) {
+  if (gold <= 0) {
     alert('not enough gold');
     return;
-  }*/
+  }
   await completeTrade();
-  await deleteShop();
   await save_game(username);
-  await updateShop();
   location.reload();
 };
 
