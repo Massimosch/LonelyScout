@@ -1,0 +1,8 @@
+body {
+    background-color: burlywood;
+    font-family: 'Source Code Pro', monospace;
+    margin: 0;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+}

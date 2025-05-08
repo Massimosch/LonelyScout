@@ -44,13 +44,6 @@ def update_consumable_Inventory(game_id, consumables):
             exequte_this_query(insert_food)
 
 def update_weapon_Inventory(game_id, weapons):
-    # I am checking, if some old weapon was lost in the game, I delete from db
-    # get_old_weapons = exequte_this_query(f"SELECT id FROM weapon_Inventory WHERE game_id={game_id}")
-    # id_list = [item["id"] for item in weapons if "id" in item]
-    # for item in get_old_weapons:
-    #     if item not in id_list:
-    #         exequte_this_query(f"DELETE FROM weapon_Inventory WHERE id = '{item}'")
-
     for item in weapons:
         if 'id' in item:
             if item['current_durability'] == 0:
@@ -69,7 +62,15 @@ def start_new_game(player_name, current_checkpoint, health, score):
     return response
 
 def delete_game(game_id):
-    delete_query = f"DELETE FROM game WHERE id = '{game_id}'"
+    delete_query = f"DELETE FROM game WHERE id = {game_id}"
+    exequte_this_query(delete_query)
+
+def delete_consumable_Inventory(game_id):
+    delete_query = f"DELETE FROM consumable_Inventory WHERE game_id = {game_id}"
+    exequte_this_query(delete_query)
+
+def delete_weapon_Inventory(game_id):
+    delete_query = f"DELETE FROM weapon_Inventory WHERE game_id = {game_id}"
     exequte_this_query(delete_query)
 
 def get_random_enemy():
@@ -80,9 +81,7 @@ def get_random_enemy():
 def get_last_checkpoint():
     q = f"SELECT id FROM checkpoint ORDER BY id DESC LIMIT 1"
     result = exequte_this_query(q)
-    if result:
-        return result[0]['id']
-    return None
+    return result
 
 def get_checkpoints():
     q_for_checkpoints = "SELECT * FROM checkpoint"
@@ -115,3 +114,4 @@ def get_shop_items():
     q = f"SELECT * FROM consumables;"
     cons= exequte_this_query(q)
     return [weps,cons]
+

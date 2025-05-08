@@ -115,7 +115,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-
   if (tallentaBtn) {
     tallentaBtn.addEventListener('click', async()=> {
       await save_game()

@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 weapons.addEventListener('change', () => {
    battleState.playerState.selectedWeapon = battleState.weapons[weapons.value];
-   console.log(weapons.value, 'i am here', battleState.playerState.selectedWeapon)
+   console.log(weapons.value, 'i am here', battleState.playerState.selectedWeapon, battleState.last_checkpoint)
 });
 
 hit.addEventListener('click', runFightRound);
@@ -47,7 +47,7 @@ const battleState = {
           name: 'nyrkki',
           type: null,
           damage: 7,
-          durability: Infinity,
+          current_durability: Infinity,
         },
       },
   food: [],
@@ -55,36 +55,9 @@ const battleState = {
     {
       name: 'nyrkki',
       damage: 7,
+      type: null,
       current_durability: Infinity,
     }
-    // {
-    //   name: 'steel sword',
-    //   type: 'sword',
-    //   saleValue: 250,
-    //   damage: 100,
-    //   durability: 10,
-    // },
-    // {
-    //   name: 'slingshot',
-    //   type: 'ranged',
-    //   saleValue: 100,
-    //   damage: 50,
-    //   durability: 10,
-    // },
-    // {
-    //   name: 'bow',
-    //   type: 'ranged',
-    //   saleValue: 150,
-    //   damage: 50,
-    //   durability: 10,
-    // },
-    // {
-    //   name: 'magic staff',
-    //   type: 'magic',
-    //   saleValue: 175,
-    //   damage: 60,
-    //   durability: 10,
-    // },
   ],
   enemy: {
     name: 'orc',
@@ -92,6 +65,7 @@ const battleState = {
     weakness: 'sword',
     health: 50,
   },
+  last_checkpoint: null
 };
 
 async function updateGameState(username) {
@@ -117,6 +91,13 @@ async function updateGameState(username) {
     battleState.enemy.damage = enemy.damage;
     battleState.enemy.weakness = enemy.weakness;
     battleState.enemy.health = enemy.health;
+
+    const last_checkpoint_res = await fetch('http://localhost:8000/get_last_checkpoint')
+    console.log(last_checkpoint_res)
+    battleState.last_checkpoint = await last_checkpoint_res.json()
+    console.log('tyrsdjhfbkjars',battleState.last_checkpoint.id) //dictionary
+
+
   } catch (e) {
     console.log(e);
   }
@@ -136,17 +117,20 @@ function updateBattleView() {
 }
 function view_weapons() {
     weapons.innerHTML = '';
-//    console.log(battleState.weapons)
+    console.log(battleState.weapons)
     for (let i = 0; i < battleState.weapons.length; i++) {
-      if (battleState.weapons[i].current_durability > 0){
+
         const option = document.createElement('option');
         option.value = i;
         option.textContent = `${battleState.weapons[i].name} (kestävyys: ${battleState.weapons[i].current_durability}, damage: ${battleState.weapons[i].damage})`;
         weapons.appendChild(option);
-      }
+
   }
 }
 async function runFightRound() {
+  if (battleState.playerState.selectedWeapon.current_durability===0){
+    // create modal
+  }
   if (battleState.playerState.selectedWeapon.type ===
       battleState.enemy.weakness) {
     battleState.enemy.health -= 2 *
@@ -159,7 +143,7 @@ async function runFightRound() {
   enemy_health.innerHTML = `TERVEYS: ${battleState.enemy.health}`;
   battleState.playerState.selectedWeapon.current_durability -= 1;
  //I need to renew weapons display
-  await view_weapons()
+  view_weapons()
 
   if (battleState.enemy.health > 0) {
 
@@ -190,40 +174,55 @@ async function runFightRound() {
     // enemy dead -> some pop up like modal in the store 'you can do futher'
     let pistePalkinto = 125
     battleState.playerState.score += pistePalkinto;
-    battleModal.style.display = 'block';
-    get_joke().then(joke=>{battleModalHeader.innerHTML = `Vihollinen on voitettu! Sait ${pistePalkinto} pistettä!<br><br>Vitsi: ${joke}`});
-    battleModalDesc.innerHTML = 'Voit siirtyä eteenpäin.';
-    btnModal.onclick = async function() {
+    //implement different Modal for end of game and if game continue
+    if (battleState.playerState.current_checkpoint_id > battleState.last_checkpoint.id) {
+      //game ended
+      battleModal.style.display = 'block';
+      get_joke().then(joke=>{battleModalHeader.innerHTML = `Viimeinen vihollinen on voitettu! Sait ${pistePalkinto} pistettä!<br><br>Vitsi: ${joke}`});
+      battleModalDesc.innerHTML = '';
+      btnModal.onclick = async function() {
+        count_scores();
+        await save_data();
+        window.location.href = `results.html?game_id=${battleState.playerState.game_id}`;
+        battleModal.style.display = 'none';}
+    } else {
+      battleModal.style.display = 'block';
+      get_joke().then(joke=>{battleModalHeader.innerHTML = `Vihollinen on voitettu! Sait ${pistePalkinto} pistettä!<br><br>Vitsi: ${joke}`});
+      battleModalDesc.innerHTML = 'Voit siirtyä eteenpäin.';
+      btnModal.onclick = async function() {
       await save_data();
       window.location.href = `peli.html?username=${battleState.playerState.player}`;
       battleModal.style.display = 'none';
     };
+    }
   }
 }
 
 async function save_data() {
   try {
-    let data = {
-      player_stats: {
-        player: battleState.playerState.player,
-        current_checkpoint_id: battleState.playerState.current_checkpoint_id,
-        health: battleState.playerState.health,
-        score: battleState.playerState.score,
-      },
-      consumables: battleState.food,
-      weapons: battleState.weapons.slice(1),
-    };
+    if (battleState.playerState.health>1) {
+      let data = {
+        player_stats: {
+          player: battleState.playerState.player,
+          current_checkpoint_id: battleState.playerState.current_checkpoint_id,
+          health: battleState.playerState.health,
+          score: battleState.playerState.score,
+        },
+        consumables: battleState.food,
+        weapons: battleState.weapons.slice(1),
+      };
 
-    console.log(data);
+      console.log(data);
 
-    const req = await fetch(
-        `http://localhost:8000/save_game/${battleState.playerState.game_id}`,
-        {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(data),
-        });
-  } catch (e) {
+      const req = await fetch(
+          `http://localhost:8000/save_game/${battleState.playerState.game_id}`,
+          {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data),
+          });
+    }
+    } catch (e) {
     console.log(e);
   }
 }
@@ -233,6 +232,17 @@ async function get_joke () {
   const data=await response.json()
   const joke=data.joke
   return joke
+}
+
+function count_scores() {
+  battleState.food.forEach((item)=>{
+    battleState.playerState.score += item.quantity * item.sale_value
+  })
+  battleState.food = []
+  battleState.weapons.slice(1).forEach((weapon)=>{
+    battleState.playerState.score += weapon.current_durability * (weapon.sale_value/weapon.durability)
+  })
+  battleState.weapons = []
 }
 
 
