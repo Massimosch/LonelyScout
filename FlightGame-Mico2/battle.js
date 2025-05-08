@@ -128,20 +128,19 @@ function view_weapons() {
   }
 }
 async function runFightRound() {
-  if (battleState.playerState.selectedWeapon.current_durability===0){
-    // create modal
-  }
-  if (battleState.playerState.selectedWeapon.type ===
-      battleState.enemy.weakness) {
-    battleState.enemy.health -= 2 *
-        battleState.playerState.selectedWeapon.damage;
+  if (battleState.playerState.selectedWeapon.current_durability>0) {
+    if (battleState.playerState.selectedWeapon.type ===
+        battleState.enemy.weakness) {
+      battleState.enemy.health -= 2 *
+          battleState.playerState.selectedWeapon.damage;
 
-  } else {
-    battleState.enemy.health -= battleState.playerState.selectedWeapon.damage;
+    } else {
+      battleState.enemy.health -= battleState.playerState.selectedWeapon.damage;
+    }
+    //hit
+    enemy_health.innerHTML = `TERVEYS: ${battleState.enemy.health}`;
+    battleState.playerState.selectedWeapon.current_durability -= 1;
   }
-  //hit
-  enemy_health.innerHTML = `TERVEYS: ${battleState.enemy.health}`;
-  battleState.playerState.selectedWeapon.current_durability -= 1;
  //I need to renew weapons display
   view_weapons()
 
