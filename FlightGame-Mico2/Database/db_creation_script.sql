@@ -67,20 +67,20 @@ CREATE TABLE consumable_Inventory (
 );
 
 INSERT INTO enemy (name, damage, weakness, health) VALUES
-('goblin', 3, "sword", 30),
-('rogue', 5, "magic", 40),
-('slime', 2, "hand", 20);
+('goblin', 3, "sword", 50),
+('rogue', 5, "magic", 100),
+('slime', 8, "hand", 40);
 
 INSERT INTO consumables (name, sale_value, heal_amount) VALUES
-('parantava juoma', 30, 25),
-('nakki', 2, 5),
-('piirakka', 20, 15);
+('parantava juoma', 55, 50),
+('nakki', 10, 5),
+('piirakka', 25, 10);
 
 INSERT INTO weapons (name, type, sale_value, damage, durability) VALUES
-('steel sword', 'sword', 250, 100, 10),
-('slingshot', 'ranged', 100, 50, 10),
-('bow', 'ranged', 150, 50, 10),
-('magic staff', 'magic', 175, 60, 10);
+('steel sword', 'sword', 550, 25, 10),
+('slingshot', 'ranged', 175, 12, 3),
+('bow', 'ranged', 225, 15, 5),
+('magic staff', 'magic', 300, 30, 5);
 
 INSERT INTO checkpoint (name) VALUES
 ('Kotikylä'),

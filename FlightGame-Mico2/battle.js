@@ -46,7 +46,7 @@ const battleState = {
         selectedWeapon: {
           name: 'nyrkki',
           type: null,
-          damage: 10,
+          damage: 7,
           durability: Infinity,
         },
       },
@@ -54,7 +54,7 @@ const battleState = {
   weapons: [
     {
       name: 'nyrkki',
-      damage: 10,
+      damage: 7,
       current_durability: Infinity,
     }
     // {
