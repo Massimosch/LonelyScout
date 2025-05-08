@@ -291,6 +291,9 @@ async function updateShop() {
       weapons: structuredClone(gameState.weapons),
       consumables: structuredClone(gameState.food),
     };
+    for (let weapon of playerInventory.weapons){
+      weapon.sale_value=Math.round(weapon.sale_value/weapon.durability*weapon.current_durability);
+    }
     console.log(gameState);
     console.log(shopInventory);
     console.log(playerInventory);
@@ -344,7 +347,7 @@ async function completeTrade() {
 }
 
 tradeButt.onclick = async function() {
-  if (gold <= 0) {
+  if (gold < 0) {
     alert('not enough gold');
     return;
   }
