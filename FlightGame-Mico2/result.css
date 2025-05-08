@@ -4,16 +4,54 @@ body {
     margin: 0;
     padding: 1rem;
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
+    gap: 2rem;
 }
 
 h1 {
     text-align: center;
-    width:100%
+    width:100%;
+    margin-bottom: 0;
 }
 
-div {
-    text-align: center;
-    width:100%
+#game_results {
+    background-color: #fdf7cb;
+    display: flex;
+    border-radius: 3rem;
+    border: 2px solid black;
+    padding-bottom: 2.5rem;
+}
+
+
+.place{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+img {
+    width: 50%;
+    height: auto;
+}
+
+button {
+    background-image: url('images/selection_img.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    width: 8rem;
+    height: 2rem;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    transform: scale(1.1);
 }

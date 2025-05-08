@@ -147,13 +147,13 @@ async function updateGameState(username) {
     locationName.innerHTML = `${res_data.player_stats.checkpoint_name}`;
     locationImage.src = `images/${res_data.player_stats.checkpoint_name}.png`;
 
-    infoPopup.textContent=await fact_about_score(gameState.playerState.score)
-    score.appendChild(infoEmoji)
+    infoPopup.textContent=await fact_about_score(gameState.playerState.score);
+    score.appendChild(infoEmoji);
 
-    gameState.weapons=res_data.weapons
+    gameState.weapons=res_data.weapons;
 
     if (gameState.weapons.length>0) {
-      create_weapon_elements(gameState.weapons)
+      create_weapon_elements(gameState.weapons);
       }
 
 
@@ -163,7 +163,7 @@ async function updateGameState(username) {
 
     current_consumables=gameState.food;
 
-    change_symbol_in_name(current_consumables,' ','-')
+    change_symbol_in_name(current_consumables,' ','-');
 
     for (let consumable of current_consumables) {
       const item = consumables.querySelector(`#${consumable.name}`);
@@ -214,16 +214,16 @@ function create_weapon_elements(weaponList){
   'magic staff': '🔮',
   };
   for (let weapon of weaponList){
-    const weaponElement=document.createElement('div')
-    weaponElement.classList.add('item-container')
-    const weaponEmoji=document.createElement('span')
-    weaponEmoji.textContent=`${emojiMap[weapon.name]}`
-    const popup=document.createElement('div')
-    popup.classList.add('item-popup')
-    popup.textContent=`Nimi:${weapon.name} | Tyyppi:${weapon.type} | Hinta:${Math.round(weapon.sale_value/weapon.durability*weapon.current_durability)} | Vahinko:${weapon.damage} | Kestävyys:${weapon.current_durability}`
-    weaponElement.appendChild(weaponEmoji)
-    weaponElement.appendChild(popup)
-    weapons.appendChild(weaponElement)
+    const weaponElement=document.createElement('div');
+    weaponElement.classList.add('item-container');
+    const weaponEmoji=document.createElement('span');
+    weaponEmoji.textContent=`${emojiMap[weapon.name]}`;
+    const popup=document.createElement('div');
+    popup.classList.add('item-popup');
+    popup.textContent=`Nimi:${weapon.name} | Tyyppi:${weapon.type} | Hinta:${Math.round(weapon.sale_value/weapon.durability*weapon.current_durability)} | Vahinko:${weapon.damage} | Kestävyys:${weapon.current_durability}`;
+    weaponElement.appendChild(weaponEmoji);
+    weaponElement.appendChild(popup);
+    weapons.appendChild(weaponElement);
   }
 }
 
@@ -259,11 +259,11 @@ async function save_game () {
   }
 async function fact_about_score(score){
   try{
-    const response=await fetch (`http://numbersapi.com/${score}/year?default=Your+score+is+too+high+or+too+low+to+get+facts`)
-    const fact=await response.text()
+    const response=await fetch (`http://numbersapi.com/${score}/year?default=Your+score+is+too+high+or+too+low+to+get+facts`);
+    const fact=await response.text();
     return fact
   }catch (e) {
-    console.log(e)
+    console.log(e);
     return "The service is unavailable, check console"
   }
 }
