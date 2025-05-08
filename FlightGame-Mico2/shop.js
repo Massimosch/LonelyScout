@@ -56,7 +56,7 @@ function createInventoryInfo(inventory, inventoryType, itemContainer) {
     itemDiv.appendChild(itemButton);
 
     if (inventoryType === 'weapons') {
-      itemInfoParagraph.innerHTML = `<b>${item.name}</b><br><br><b>Tyyppi: </b>${item.type}<b> Vahinko: </b> ${item.damage}<br><b> Kestävyys: </b> ${item.current_durability}<b> Hinta: </b> ${item.sale_value/item.durability*item.current_durability}`;
+      itemInfoParagraph.innerHTML = `<b>${item.name}</b><br><br><b>Tyyppi: </b>${item.type}<b> Vahinko: </b> ${item.damage}<br><b> Kestävyys: </b> ${item.current_durability}<b> Hinta: </b> ${Math.round(item.sale_value/item.durability*item.current_durability)}`;
     } else {
       let quantityInput = document.createElement('input');
       let quantityLabel = document.createElement('label');
