@@ -103,8 +103,9 @@ def get_weapons(game_id):
     weapons = exequte_this_query(q)
     return weapons
 
-def get_best_scores():
-    q = f"SELECT player_name, score FROM game WHERE is_ended=1 ORDER BY score DESC LIMIT 10"
+def get_best_scores(game_id):
+    q = f"""WITH ranked AS (SELECT player_name, score, id, RANK() OVER (ORDER BY score DESC) AS place FROM game WHERE is_ended = TRUE)
+    SELECT * FROM ranked WHERE place <= 3 OR id = {game_id}"""
     result = exequte_this_query(q)
     return result
 

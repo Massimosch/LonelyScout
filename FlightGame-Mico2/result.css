@@ -4,5 +4,16 @@ body {
     margin: 0;
     padding: 1rem;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
+}
+
+h1 {
+    text-align: center;
+    width:100%
+}
+
+div {
+    text-align: center;
+    width:100%
 }

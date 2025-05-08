@@ -17,7 +17,7 @@ async function getStats(game_id) {
 
     for (let i = 0; i < res_data.length; i++) {
         const line = document.createElement('div')
-        line.textContent = `${i+1} ${res_data[i].player_name} ${res_data[i].score}`
+        line.textContent = `${res_data[i].place} ${res_data[i].player_name} ${res_data[i].score}`
         game_results.appendChild(line)
     }
 }
