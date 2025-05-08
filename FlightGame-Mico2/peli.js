@@ -257,7 +257,12 @@ async function save_game () {
     }
   }
 async function fact_about_score(score){
+  try{
     const response=await fetch (`http://numbersapi.com/${score}/year?default=Your+score+is+too+high+or+too+low+to+get+facts`)
     const fact=await response.text()
     return fact
+  }catch (e) {
+    console.log(e)
+    return "The service is unavailable, check console"
+  }
 }
