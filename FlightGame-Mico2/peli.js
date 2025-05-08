@@ -219,7 +219,7 @@ function create_weapon_elements(weaponList){
     weaponEmoji.textContent=`${emojiMap[weapon.name]}`
     const popup=document.createElement('div')
     popup.classList.add('item-popup')
-    popup.textContent=`name:${weapon.name} | type:${weapon.type} | sale value:${weapon.sale_value} | damage:${weapon.damage} | current durability:${weapon.current_durability}`
+    popup.textContent=`Nimi:${weapon.name} | Tyyppi:${weapon.type} | Hinta:${Math.round(weapon.sale_value/weapon.durability*weapon.current_durability)} | Vahinko:${weapon.damage} | Kestävyys:${weapon.current_durability}`
     weaponElement.appendChild(weaponEmoji)
     weaponElement.appendChild(popup)
     weapons.appendChild(weaponElement)
