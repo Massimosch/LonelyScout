@@ -70,6 +70,7 @@ const gameState = {
     weakness: 'sword',
     health: 50,
   },
+  is_ended: false
 };
 let current_consumables=gameState.food;
 let current_stats = gameState.playerState;
@@ -240,7 +241,8 @@ async function save_game () {
               score: gameState.playerState.score,
             },
         consumables: gameState.food,
-        weapons: gameState.weapons || []
+        weapons: gameState.weapons || [],
+        is_ended: false
       };
 
       const request = await fetch(

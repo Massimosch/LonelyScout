@@ -64,8 +64,10 @@ const battleState = {
     damage: 3,
     weakness: 'sword',
     health: 50,
+    scores: 0
   },
-  last_checkpoint: null
+  last_checkpoint: null,
+  is_ended: false
 };
 
 async function updateGameState(username) {
@@ -91,11 +93,13 @@ async function updateGameState(username) {
     battleState.enemy.damage = enemy.damage;
     battleState.enemy.weakness = enemy.weakness;
     battleState.enemy.health = enemy.health;
+    battleState.enemy.scores=enemy.health
 
     const last_checkpoint_res = await fetch('http://localhost:8000/get_last_checkpoint')
     console.log(last_checkpoint_res)
     battleState.last_checkpoint = await last_checkpoint_res.json()
     console.log('tyrsdjhfbkjars',battleState.last_checkpoint.id) //dictionary
+    console.log('current',battleState.playerState.current_checkpoint_id) //dictionary
 
 
   } catch (e) {
@@ -172,7 +176,7 @@ async function runFightRound() {
   } else {
     // enemy dead -> some pop up like modal in the store 'you can do futher'
     let pistePalkinto = 125
-    battleState.playerState.score += pistePalkinto;
+    battleState.playerState.score += battleState.enemy.scores;
     //implement different Modal for end of game and if game continue
     if (battleState.playerState.current_checkpoint_id > battleState.last_checkpoint.id) {
       //game ended
@@ -209,6 +213,7 @@ async function save_data() {
         },
         consumables: battleState.food,
         weapons: battleState.weapons.slice(1),
+        is_ended: battleState.playerState.current_checkpoint_id > battleState.last_checkpoint.id
       };
 
       console.log(data);
@@ -248,6 +253,3 @@ function count_scores() {
   })
   battleState.weapons = []
 }
-
-
-

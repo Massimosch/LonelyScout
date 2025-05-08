@@ -25,9 +25,11 @@ def save_game(game_id):
     data = request.json
 # we don't need player name because we dont' change it
     current_checkpoint_id = int(data["player_stats"]["current_checkpoint_id"])
+    if current_checkpoint_id > last_checkpoint:
+        current_checkpoint_id = last_checkpoint
     health = int(data["player_stats"]["health"])
     score = int(data["player_stats"]["score"])
-    is_ended = True if current_checkpoint_id == last_checkpoint+1 else False
+    is_ended = data["is_ended"]
 #    if player wants to save the second unfinished game, the first one is deleted
     if is_ended == False:
         unfinished_games = lonely_scout_backend_functions.get_game(data["player_stats"]["player"])
@@ -65,7 +67,7 @@ def get_random_enemy():
 
 @app.route('/best_scores/<game_id>')
 def get_best_scores(game_id):
-    result = lonely_scout_backend_functions.get_best_scores()
+    result = lonely_scout_backend_functions.get_best_scores(game_id)
     return result
 
 @app.route('/get_shop_items')
