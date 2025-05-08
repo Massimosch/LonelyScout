@@ -87,8 +87,7 @@ function createInventoryInfo(inventory, inventoryType, itemContainer) {
         addToTrade(itemButton, item, itemDiv, itemContainer,
             tradeArray.buy,
             inventoryType,
-            tradeBuying,
-            item.sale_value);
+            tradeBuying);
       };
       }
         else if(inventory===playerInventory){
@@ -96,8 +95,7 @@ function createInventoryInfo(inventory, inventoryType, itemContainer) {
         addToTrade(itemButton, item, itemDiv, itemContainer,
             tradeArray.sell,
             inventoryType,
-            tradeSelling,
-            -item.sale_value);
+            tradeSelling);
       };
       }
 
@@ -221,7 +219,8 @@ function removeFromTradeCons(
 
 function addToTrade(
     button, item, itemdiv, itemContainer, tradesArray, inventoryType,
-    tradeContainer, sale_value) {
+    tradeContainer) {
+    let price=item.sale_value;
     if (tradesArray === tradeArray.buy) {
       itemdiv = itemdiv.cloneNode(true);
       button = itemdiv.childNodes.item(0);
@@ -231,17 +230,20 @@ function addToTrade(
       }
     }
     }
+    else{
+      price=-Math.round(item.sale_value/item.durability*item.current_durability);
+    }
     button.innerText = 'Poista';
     console.log(tradeWindow);
     console.log(tradeContainer);
     tradeContainer.appendChild(itemdiv);
-    gold -= sale_value;
+    gold -= price;
     tradesArray[inventoryType].push(item);
     goldText.innerText = `Score: ${gold}`;
     tradeContainer.style.display = 'Block';
     button.onclick = function() {
     removeFromTrade(button, item, itemdiv, itemContainer, tradesArray,
-        inventoryType, tradeContainer, sale_value);};
+        inventoryType, tradeContainer, price);};
 }
 
 function removeFromTrade(
@@ -291,9 +293,6 @@ async function updateShop() {
       weapons: structuredClone(gameState.weapons),
       consumables: structuredClone(gameState.food),
     };
-    for (let weapon of playerInventory.weapons){
-      weapon.sale_value=Math.round(weapon.sale_value/weapon.durability*weapon.current_durability);
-    }
     console.log(gameState);
     console.log(shopInventory);
     console.log(playerInventory);
