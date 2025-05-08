@@ -56,7 +56,7 @@ function createInventoryInfo(inventory, inventoryType, itemContainer) {
     itemDiv.appendChild(itemButton);
 
     if (inventoryType === 'weapons') {
-      itemInfoParagraph.innerHTML = `<b>${item.name}</b><br><br><b>Tyyppi: </b>${item.type}<b> Vahinko: </b> ${item.damage}<br><b> Kestävyys: </b> ${item.durability}<b> Hinta: </b> ${item.sale_value}`;
+      itemInfoParagraph.innerHTML = `<b>${item.name}</b><br><br><b>Tyyppi: </b>${item.type}<b> Vahinko: </b> ${item.damage}<br><b> Kestävyys: </b> ${item.current_durability}<b> Hinta: </b> ${Math.round(item.sale_value/item.durability*item.current_durability)}`;
     } else {
       let quantityInput = document.createElement('input');
       let quantityLabel = document.createElement('label');
@@ -87,8 +87,7 @@ function createInventoryInfo(inventory, inventoryType, itemContainer) {
         addToTrade(itemButton, item, itemDiv, itemContainer,
             tradeArray.buy,
             inventoryType,
-            tradeBuying,
-            item.sale_value);
+            tradeBuying);
       };
       }
         else if(inventory===playerInventory){
@@ -96,8 +95,7 @@ function createInventoryInfo(inventory, inventoryType, itemContainer) {
         addToTrade(itemButton, item, itemDiv, itemContainer,
             tradeArray.sell,
             inventoryType,
-            tradeSelling,
-            -item.sale_value);
+            tradeSelling);
       };
       }
 
@@ -221,7 +219,8 @@ function removeFromTradeCons(
 
 function addToTrade(
     button, item, itemdiv, itemContainer, tradesArray, inventoryType,
-    tradeContainer, sale_value) {
+    tradeContainer) {
+    let price=item.sale_value;
     if (tradesArray === tradeArray.buy) {
       itemdiv = itemdiv.cloneNode(true);
       button = itemdiv.childNodes.item(0);
@@ -231,17 +230,20 @@ function addToTrade(
       }
     }
     }
+    else{
+      price=-Math.round(item.sale_value/item.durability*item.current_durability);
+    }
     button.innerText = 'Poista';
     console.log(tradeWindow);
     console.log(tradeContainer);
     tradeContainer.appendChild(itemdiv);
-    gold -= sale_value;
+    gold -= price;
     tradesArray[inventoryType].push(item);
     goldText.innerText = `Score: ${gold}`;
     tradeContainer.style.display = 'Block';
     button.onclick = function() {
     removeFromTrade(button, item, itemdiv, itemContainer, tradesArray,
-        inventoryType, tradeContainer, sale_value);};
+        inventoryType, tradeContainer, price);};
 }
 
 function removeFromTrade(
@@ -344,7 +346,7 @@ async function completeTrade() {
 }
 
 tradeButt.onclick = async function() {
-  if (gold <= 0) {
+  if (gold < 0) {
     alert('not enough gold');
     return;
   }
