@@ -45,8 +45,7 @@
 }
 .item {
             flex: 1;
-
-  margin: 10% auto; /* 15% from the top and centered */
+  margin: 2% auto; /* 15% from the top and centered */
   padding: 10px;
 
   width: 100%;
