@@ -23,10 +23,17 @@ let shopWeaponContainer = document.querySelector('#shopWeapons');
 let shopConsumableContainer = document.querySelector('#shopConsumables');
 let playerWeaponContainer = document.querySelector('#playerWeapons');
 let playerConsumableContainer = document.querySelector('#playerConsumables');
+let closeShop = document.querySelector('.closeShop');
 let shopCreated = false;
 let trading = false;
 let adding = false;
 
+closeShop.addEventListener('click', () => {
+  if (trading) {
+    return;
+  }
+  location.reload();
+});
 window.onclick = function(event) {
   if (event.target === shopModal) {
     if (trading) {
@@ -36,10 +43,8 @@ window.onclick = function(event) {
   }
 };
 shopButt.onclick = function() {
-  if (!shopCreated) {
     updateShop().catch();
-  }
-  shopModal.style.display = 'flex';
+    shopModal.style.display="flex";
 };
 
 function createInventoryInfo(inventory, inventoryType, itemContainer) {
